@@ -14,6 +14,7 @@ import (
 	"context"
 	"os/exec"
 	"net/http"
+	"encoding/json"
 	"path/filepath"
 	"github.com/charmbracelet/log"
 )
@@ -28,6 +29,15 @@ type (
 		Timeout time.Duration
 		Env []string
 		WorkDir string
+	}
+	ReqProps struct {
+		Method string      `json:"method"`
+		URL    string      `json:"url"`
+		Host   string      `json:"host"`
+		RemoteAddr string  `json:"remote_addr"`
+		Header http.Header `json:"header"`
+		QParams map[string]string `json:"query_params"`
+		Body   json.RawMessage `json:"body,omitempty"`
 	}
 )
 
@@ -261,7 +271,7 @@ func parseAndRun(workingDir string, src string, req *http.Request) (string, erro
 			return "", err 
 		}
 
-		code = "source "+tmpLib+"\n"+code
+		code = formatCode(code, tmpLib, req)
 
 		stdout, stderr, err := r.Run(workingDir, code, file)
 		if err != nil {
@@ -291,6 +301,16 @@ func genLib(lang string, r *http.Request, tmpDir string) (string, error) {
 	}
 	defer source.Close()
 
+	jsonHeaders, err := json.Marshal(r.Header)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(filepath.Join(tmpDir,"headers.json"), jsonHeaders, 0644)
+	if err != nil {
+		return "", err
+	}
+
 	tmpLib, err := os.Create(filepath.Join(tmpDir, "bhtm"))
 	if err != nil {
 		return "", err
@@ -303,4 +323,23 @@ func genLib(lang string, r *http.Request, tmpDir string) (string, error) {
 	}
 
 	return tmpLib.Name(), nil
+}
+
+func formatCode(code string, tmpLib string, r *http.Request) string {
+	libPath := filepath.Dir(tmpLib)
+	reqProps := map[string]string{
+		"Method":     r.Method,
+		"Url":        r.URL.String(),
+		"Host":       r.Host,
+		"RemoteAddr": r.RemoteAddr,
+	}
+	for key, value := range reqProps {
+		code = key+"=\""+value+"\"\n"+code
+	}
+
+	code = `Headers="$(cat '` +
+				filepath.Join(libPath, "headers.json") +
+				"')\"\n" + code
+	code = "source " + tmpLib + "\n" + code
+	return "#!/usr/bin/env bash\n" + code
 }
