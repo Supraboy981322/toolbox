@@ -3,9 +3,11 @@ package main
 import (
 	"os"
 	"io"
+	"bytes"
 	"strconv"
 	"net/url"
 	"net/http"
+	"io/ioutil"
 	"encoding/json"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
@@ -65,7 +67,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	case "no":
 		w.Write([]byte(noReq()))
 	case "discord":
-		w.Write([]byte(discord()))
+		w.Write([]byte(discord(r)))
 	case "de-shortener":
 		w.Write([]byte(deShortenURL(r.Header.Get("og"))))
 	default:
@@ -142,6 +144,38 @@ func noReq() string {
 	return no.Reason
 }
 
-func discord() string {
-	return "TODO"
+func discord(r *http.Request) string {
+	var ok bool;var body string
+	webhook :=  r.Header.Get("webhook")
+	if webhook == "" {
+		if webhook, ok = config["discord webhook"].(string); !ok || webhook == "your discord webhook" {
+			return "no discord webhook provided or set in config"
+		}
+	}
+	switch r.Method {
+	case http.MethodGet:
+		body = r.Header.Get("body")
+	case http.MethodPost:
+		bodyByte, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err.Error()
+		}
+		body = string(bodyByte)
+	default:
+		return "no body provided"
+	}
+	payload := map[string]interface{}{
+		"content": body,
+	}
+	//json, eww....
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return err.Error()
+	}
+	resp, err := http.Post(webhook, "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		return err.Error()
+	}
+	defer resp.Body.Close()
+	return "sent"
 }

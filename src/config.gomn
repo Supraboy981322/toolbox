@@ -1,2 +1,3 @@
 ["port"] := 7834
 ["log level"] := "debug"
+["discord webhook"] := "your discord webhook" 
