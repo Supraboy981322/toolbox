@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"io"
+	"fmt"
 	"bytes"
 	"strconv"
 	"net/url"
@@ -62,22 +63,32 @@ func main() {
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
+	var selfHan bool;var resp string
 	log.Infof("[req]: %s", r.URL.Path[1:])
 	switch r.URL.Path[1:] {
 	case "no":
-		w.Write([]byte(noReq()))
+		resp = noReq()
 	case "discord":
-		w.Write([]byte(discord(r)))
-	case "de-shortener":
-		w.Write([]byte(deShortenURL(r.Header.Get("og"))))
+		resp = discord(r)
+	case "de-shortener", "de-shorten", "de-short", "deshort", "deshorten", "deshortener":
+		original := r.Header.Get("og")
+		resp = deShortenURL(original)
 	default:
-		w.Write([]byte("foo"))
+		resp = "foo"
+	}
+	if !selfHan {
+		w.Write([]byte(fmt.Sprint(resp,"\n")))
 	}
 }
 
 func deShortenURL(original string) string {
+	if original == "" {
+		return "no shortened url provided"
+	}
+
 	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		CheckRedirect: 
+			func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 	}
@@ -99,7 +110,6 @@ func deShortenURL(original string) string {
 				return err.Error()
 			}
 		}
-		
 		_, _ = io.Copy(io.Discard, resp.Body)
 		resp.Body.Close()
 
@@ -162,8 +172,13 @@ func discord(r *http.Request) string {
 		}
 		body = string(bodyByte)
 	default:
+		return "method not allowed"
+	}
+
+	if body == "" {
 		return "no body provided"
 	}
+
 	payload := map[string]interface{}{
 		"content": body,
 	}
