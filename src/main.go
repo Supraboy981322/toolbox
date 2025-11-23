@@ -83,7 +83,6 @@ func main() {
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	var selfHan bool;var resp string
-	log.Infof("[req]: %s", r.URL.Path[1:])
 	switch r.URL.Path[1:] {
 	case "no":
 		resp = noReq()
@@ -95,8 +94,10 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		original := r.Header.Get("og")
 		resp = deShortenURL(original)
 	default:
-		resp = "foo"
+		bhtm(w, r)
+		return
 	}
+	log.Infof("[req]: %s", r.URL.Path[1:])
 	if !selfHan {
 		w.Write([]byte(fmt.Sprint(resp,"\n")))
 	}

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>toolbox - home</title>
+    <link rel="stylesheet" href= "/style.css">
+  </head>
+  <body>
+      <$bash
+        ls -l | linesToHTML
+      $>
+  </body
+</html>
+
