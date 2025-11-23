@@ -2,7 +2,9 @@ package main
 
 import (
 	"os"
+	"io"
 	"strconv"
+	"net/url"
 	"net/http"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
@@ -57,14 +59,54 @@ func main() {
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
+	log.Infof("[req]: %s", r.URL.Path[1:])
 	switch r.URL.Path[1:] {
 	case "de-shortener":
-		w.Write([]byte(deShortenURL(r.Header.Get("short"))))
+		w.Write([]byte(deShortenURL(r.Header.Get("og"))))
 	default:
 		w.Write([]byte("foo"))
 	}
 }
 
 func deShortenURL(original string) string {
-  return original
+	client := &http.Client{
+		CheckRedirect:
+			func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+	}
+
+	var loc string
+	currentURL := original
+	for {
+		req, err := http.NewRequest("HEAD", currentURL, nil)
+		if err != nil {
+			return err.Error()
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			uerr, ok := err.(*url.Error)
+			if ok && uerr.Err == http.ErrUseLastResponse {
+				err = nil
+			} else if err != nil {
+				return err.Error()
+			}
+		}
+		
+		_, _ = io.Copy(io.Discard, resp.Body)
+		resp.Body.Close()
+
+		if resp.StatusCode >= 300 && resp.StatusCode < 400 {
+			location, err := resp.Location()
+			if err != nil {
+				return err.Error()
+			}
+			loc = location.String()
+			currentURL = loc
+		} else {
+			break
+		}
+	}
+	return loc
 }
