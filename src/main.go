@@ -5,10 +5,13 @@ import (
 	"io"
 	"fmt"
 	"bytes"
+	"strings"
 	"strconv"
 	"net/url"
+	"math/big"
 	"net/http"
 	"io/ioutil"
+	"crypto/rand"
 	"encoding/json"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
@@ -17,6 +20,22 @@ import (
 var (
 	port int
 	config gomn.Map
+	chars = []string{
+		"a", "b",	"c", "d", "e", "f", "g",
+		"h", "i", "j", "k", "l", "m", "n",
+		"o", "p", "q", "r", "s", "t", "u",
+		"v", "w", "x", "y", "z", "A", "B",
+		"C", "D", "E", "F", "G", "H", "I",
+		"J", "K", "L", "M", "N", "O", "P",
+		"Q", "R", "S", "T", "U", "V", "W",
+		"X", "Y", "Z", "0", "9", "8", "7",
+		"6", "5", "4", "3", "2", "1", "!",
+		"@", "#", "$", "%", "^", "&", "*",
+		"(", ")", "-", "_", "=", "+", "[",
+		"]", "{", "}", "|", "\\", ";", ":",
+		"'", "\"", "<", ">", "/", "?", ".",
+		",",
+	}
 )
 
 func main() {
@@ -70,6 +89,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		resp = noReq()
 	case "discord":
 		resp = discord(r)
+	case "pass", "ranPass", "ran", "random", "password", "ranpass":
+		resp = ranPass(r)
 	case "de-shortener", "de-shorten", "de-short", "deshort", "deshorten", "deshortener":
 		original := r.Header.Get("og")
 		resp = deShortenURL(original)
@@ -193,4 +214,49 @@ func discord(r *http.Request) string {
 	}
 	defer resp.Body.Close()
 	return "sent"
+}
+
+func ranPass(r *http.Request) string {
+	lenStr := r.Header.Get("len")
+	if len(lenStr) >= 18 {
+		log.Warnf("overflow attempt: ip%s",
+			r.RemoteAddr)
+		return "request denied; possible overflow attempt"
+	}
+	if lenStr == "" {
+		lenStr = "16"
+	}
+
+	charSet := []string{}
+	if charsRaw := r.Header.Get("bld"); charsRaw == "" {
+		if charsRaw = r.Header.Get("build"); charsRaw == "" {
+			charSet = chars 
+		} else { charSet = strings.Split(charsRaw, "") }
+	} else { charSet = strings.Split(charsRaw, "") }
+
+	l, err := strconv.ParseInt(lenStr, 10, 64)
+	if err != nil {
+		return err.Error()
+	}
+
+	if l < 0 {
+		l = -l
+	}
+	if l > 56527 {
+		log.Debug("req denied")
+		return "What the hell would you need a random string longer than 56527 characters for?"
+	}
+	var res string
+	var i int64
+	for i = 0; i < l; i++ {
+		bigInt := big.NewInt(int64(len(charSet)))
+		in, err := rand.Int(rand.Reader, bigInt)
+		if err != nil {
+			return err.Error()
+		}
+		ranDig := int(in.Int64())
+		res += charSet[ranDig]
+	}
+
+	return res
 }
