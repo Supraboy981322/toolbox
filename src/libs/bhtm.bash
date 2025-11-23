@@ -17,5 +17,13 @@ headers() {
 
 linesToHTML() {
   local stdin=$(< /dev/stdin) 
-  echo "${stdin}" | sed 's|^|<p>|g' | sed 's|$|</p>|g'
+  printf "${stdin}\n" \
+    | sed "s|^|<${1:-p}>|g" \
+    | sed "s|$|</${1:-p}>|g"
+}
+
+linkFiles() {
+  for file in $(ls); do
+    printf "<a href=\"${file}\">${file}</a>\n"
+  done
 }

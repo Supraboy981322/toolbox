@@ -6,7 +6,8 @@
   </head>
   <body>
       <$bash
-        ls -l | linesToHTML
+        echo "${Method}"
+        linkFiles | linesToHTML
       $>
   </body
 </html>

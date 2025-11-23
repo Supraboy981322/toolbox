@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>toolbox - bhtm</title>
+    <link rel="stylesheet" href= "/style.css">
+  </head>
+  <body>
+    <h1>BHTM</h1>
+    <H3>What is BHTM?</h3>
+    <p>BHTM stands for Bash in HTML. It's a stripped-down version of <a href="https://github.com/Supraboy981322/ELH">ELH</a> which just runs Bash instead of trying to run as many languages as possible.</p>
+    <p>In case you don't know what ELH is. ELH is basically PHP, but you don't have to write PHP. When I say that, I mean embeding code in HTML which is executed by the server and replaced with the result before sending it to the client</p>
+    <p>For Example, this page has zero JavaScript, all functionality is written in Bash (using BHTM, as previously stated)</p>
+
+    <h4>Your request properties:</h4>
+    <$bash
+      printf "<p><b>Method:</b>  ${Method}</p>" 
+      printf "<p><b>URL:</b>  ${Url}</p>"
+      printf "<p><b>Host:</b>  ${Host}</p>"
+      printf "<p><b>Remote Address:</b>  ${RemoteAddr}</p>"
+    $>
+    <p><b>Headers:</p></b>
+    <code><pre><$bash printf "${Headers}" | jq $></code></pre>
+  </body
+</html>
+
