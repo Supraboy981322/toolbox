@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"net/url"
 	"net/http"
+	"encoding/json"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
 )
@@ -61,6 +62,8 @@ func main() {
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Infof("[req]: %s", r.URL.Path[1:])
 	switch r.URL.Path[1:] {
+	case "no":
+		w.Write([]byte(noReq()))
 	case "de-shortener":
 		w.Write([]byte(deShortenURL(r.Header.Get("og"))))
 	default:
@@ -70,8 +73,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 
 func deShortenURL(original string) string {
 	client := &http.Client{
-		CheckRedirect:
-			func(req *http.Request, via []*http.Request) error {
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 	}
@@ -109,4 +111,31 @@ func deShortenURL(original string) string {
 		}
 	}
 	return loc
+}
+
+func noReq() string {
+	resp, err := http.Get("https://naas.isalman.dev/no")
+	if err != nil {
+		return err.Error()
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "recieved bad status code from api"
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err.Error()
+	}
+
+	type noJSON struct {
+		Reason string `json:"reason"`
+	}
+
+	var no noJSON
+	if err := json.Unmarshal(body, &no); err != nil {
+		return err.Error()
+	}
+
+	return no.Reason
 }
