@@ -64,6 +64,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path[1:] {
 	case "no":
 		w.Write([]byte(noReq()))
+	case "discord":
+		w.Write([]byte(discord()))
 	case "de-shortener":
 		w.Write([]byte(deShortenURL(r.Header.Get("og"))))
 	default:
@@ -138,4 +140,8 @@ func noReq() string {
 	}
 
 	return no.Reason
+}
+
+func discord() string {
+	return "TODO"
 }
