@@ -5,8 +5,10 @@ simple http server with basic tools.
 ---
 
 ## features
->[!INFO]
->this list isn't guaranteed to be up-to-date each feature has it's own function, (which doesn't call another function) so just read the function names if you want a more up-to-date list
+>[!NOTE]
+>this list isn't guaranteed to be up-to-date
+>  each feature has it's own function, (which doesn't call another function)
+>    so just read the function names if you want a more up-to-date list
 
 - random string/password generator
   - (basic) password builder build tool
