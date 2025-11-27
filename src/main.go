@@ -49,7 +49,7 @@ func init() {
 	log.Info("reading config...")
 	if config, err = gomn.ParseFile("config.gomn"); err != nil {
 		log.Fatalf("failed to read config:  %v", err)
-	} else { log.Debug("read config") }
+	} else { log.Debug("read config")	}
 
 	var deLvl string
 	if deLvl, ok = config["log level"].(string); ok {
@@ -67,6 +67,7 @@ func init() {
 		default:
 			log.Fatal("invalid log level")
 		}
+
 		log.Infof("log level set to:  %s", deLvl)
 	} else { log.Fatal("failed to get log level") }
 	
@@ -77,33 +78,40 @@ func init() {
 	ptMapTmp := make(map[string]map[string]string)
 	if endPtsRaw, ok := config["endpoints"].(gomn.Map); ok {
 		log.Debug("found custom endpoints")
+
 		for ptRaw, mpRaw := range endPtsRaw {
 			ptMap := make(map[string]string)
+
 			var mp gomn.Map
 			if mp, ok = mpRaw.(gomn.Map); !ok {
 				log.Fatal("failed to assert endpoint map type")
 			} else { log.Debug("asserted endpoint map") } 
+
 			for keyRaw, valRaw := range mp {
 				if key, ok := keyRaw.(string); ok {
+
 					if valS, ok := valRaw.(string); ok {
 						ptMap[key] = valS
-					}	else { if valR, ok := valRaw.([]rune); ok {
-						ptMap[key] = string(valR)
-					} else { log.Fatalf("invalid endpoint map value", valRaw) } }
+					}	else {
+						if valR, ok := valRaw.([]rune); ok {
+							ptMap[key] = string(valR)
+						} else { log.Fatalf("invalid endpoint map value", valRaw) }
+					}
+					
 				} else { log.Fatalf("invalid endpoint map key:  ", keyRaw) }
 			}
+
 			if pt, ok := ptRaw.(string); ok {
 				ptMapTmp[pt] = ptMap
 			} else { log.Fatal("failed to assert endpoint to string") }
+
 		}; endPtMap = ptMapTmp
-//		log.Fatal(endPtMap)
 	} else { log.Debug("no custom endpoints defined") }
 
 	log.Info("startup done.")
 }
 
 func main() {
-
 	http.HandleFunc("/", pageHandler)
 	log.Infof("listening on port:  %d", port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
@@ -299,3 +307,11 @@ func headers(r *http.Request) string {
 	}
 	return string(jsonHeaders)
 }
+
+/*func endPt(pt map[string]string) string {
+	var url string
+	if url, ok := pt["source"].(string); !ok {
+		log.Errorf("failed to get source. pt:  %v", pt)
+		return "failed to get source"
+	}
+}*/
