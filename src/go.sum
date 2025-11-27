@@ -1,5 +1,7 @@
 github.com/Supraboy981322/gomn v0.0.0-20251119202208-e29d0871d441 h1:UBMMnB7QAfsiiNr259TZEtNnWDHgWzcPDHxXxi6jAqU=
 github.com/Supraboy981322/gomn v0.0.0-20251119202208-e29d0871d441/go.mod h1:mZx9Nmbu5fuNbYL64EhNXGbSBVoO+sw7k9J9HVe1TrM=
+github.com/Supraboy981322/gomn v0.0.0-20251126004559-86cd374d336e h1:UQzzJKYWruh6UBt1HXeveSxRcmzhJ6E+OAhdo6oEFXI=
+github.com/Supraboy981322/gomn v0.0.0-20251126004559-86cd374d336e/go.mod h1:mZx9Nmbu5fuNbYL64EhNXGbSBVoO+sw7k9J9HVe1TrM=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
 github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc h1:4pZI35227imm7yK2bGPcfpFEmuY1gc2YSTShr4iJBfs=

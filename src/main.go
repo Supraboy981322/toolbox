@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+//	"os"
 	"io"
 	"fmt"
 	"bytes"
@@ -14,12 +14,15 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"github.com/charmbracelet/log"
+	//	elh "github.com/Supraboy981322/ELH"
 	"github.com/Supraboy981322/gomn"
 )
 
 var (
 	port int
 	config gomn.Map
+	endPtMap map[string]map[string]string
+
 	chars = []string{
 		"a", "b",	"c", "d", "e", "f", "g",
 		"h", "i", "j", "k", "l", "m", "n",
@@ -38,43 +41,68 @@ var (
 	}
 )
 
-func main() {
+func init() {
+	var ok bool
+	var err error
 	log.SetLevel(log.DebugLevel)
-	if confBytes, err := os.ReadFile("config.gomn"); err != nil {
+
+	log.Info("reading config...")
+	if config, err = gomn.ParseFile("config.gomn"); err != nil {
 		log.Fatalf("failed to read config:  %v", err)
-	} else { log.Debug("reading config")
-		log.Info("parsing config...")
+	} else { log.Debug("read config") }
 
-		var ok bool
-		if config, err = gomn.Parse(string(confBytes)); err != nil {
-			log.Fatalf("failed to parse config:  %v", err)
-		} else { log.Debug("success mapping config") }
+	var deLvl string
+	if deLvl, ok = config["log level"].(string); ok {
+		switch deLvl {
+		case "debug":
+			log.SetLevel(log.DebugLevel)
+		case "info": 
+			log.SetLevel(log.InfoLevel)
+		case "warn": 
+			log.SetLevel(log.WarnLevel)
+		case "error":
+			log.SetLevel(log.ErrorLevel)
+		case "fatal":
+			log.SetLevel(log.FatalLevel)
+		default:
+			log.Fatal("invalid log level")
+		}
+		log.Infof("log level set to:  %s", deLvl)
+	} else { log.Fatal("failed to get log level") }
+	
+	if port, ok = config["port"].(int); !ok {
+		log.Fatal("failed to get server port")
+	} else { log.Debug("success reading server port") }
 
-		var deLvl string
-		if deLvl, ok = config["log level"].(string); ok {
-			switch deLvl {
-			case "debug":
-				log.SetLevel(log.DebugLevel)
-			case "info": 
-				log.SetLevel(log.InfoLevel)
-			case "warn": 
-				log.SetLevel(log.WarnLevel)
-			case "error":
-				log.SetLevel(log.ErrorLevel)
-			case "fatal":
-				log.SetLevel(log.FatalLevel)
-			default:
-				log.Fatal("invalid log level")
+	ptMapTmp := make(map[string]map[string]string)
+	if endPtsRaw, ok := config["endpoints"].(gomn.Map); ok {
+		log.Debug("found custom endpoints")
+		for ptRaw, mpRaw := range endPtsRaw {
+			ptMap := make(map[string]string)
+			var mp gomn.Map
+			if mp, ok = mpRaw.(gomn.Map); !ok {
+				log.Fatal("failed to assert endpoint map type")
+			} else { log.Debug("asserted endpoint map") } 
+			for keyRaw, valRaw := range mp {
+				if key, ok := keyRaw.(string); ok {
+					if valS, ok := valRaw.(string); ok {
+						ptMap[key] = valS
+					}	else { if valR, ok := valRaw.([]rune); ok {
+						ptMap[key] = string(valR)
+					} else { log.Fatalf("invalid endpoint map value", valRaw) } }
+				} else { log.Fatalf("invalid endpoint map key:  ", keyRaw) }
 			}
-			log.Infof("log level set to:  %s", deLvl)
-		} else { log.Fatal("failed to get log level") }
+			if pt, ok := ptRaw.(string); ok {
+				ptMapTmp[pt] = ptMap
+			} else { log.Fatal("failed to assert endpoint to string") }
+		}; endPtMap = ptMapTmp
+//		log.Fatal(endPtMap)
+	} else { log.Debug("no custom endpoints defined") }
 
-		if port, ok = config["port"].(int); !ok {
-			log.Fatal("failed to get server port")
-		} else { log.Debug("success reading server port") }
+	log.Info("startup done.")
+}
 
-		log.Info("success parsing config")
-	}
+func main() {
 
 	http.HandleFunc("/", pageHandler)
 	log.Infof("listening on port:  %d", port)

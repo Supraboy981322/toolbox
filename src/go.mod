@@ -3,7 +3,7 @@ module toolbox
 go 1.24.9
 
 require (
-	github.com/Supraboy981322/gomn v0.0.0-20251119202208-e29d0871d441
+	github.com/Supraboy981322/gomn v0.0.0-20251126004559-86cd374d336e
 	github.com/charmbracelet/log v0.4.2
 )
 
