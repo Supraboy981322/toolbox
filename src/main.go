@@ -93,6 +93,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	case "de-shortener", "de-shorten", "de-short", "deshort", "deshorten", "deshortener":
 		original := r.Header.Get("og")
 		resp = deShortenURL(original)
+	case "headers":
+		resp = headers(r)
 	default:
 		bhtm(w, r)
 		return
@@ -260,4 +262,12 @@ func ranPass(r *http.Request) string {
 	}
 
 	return res
+}
+
+func headers(r *http.Request) string {
+	jsonHeaders, err := json.Marshal(r.Header)
+	if err != nil {
+		return err.Error()
+	}
+	return string(jsonHeaders)
 }
