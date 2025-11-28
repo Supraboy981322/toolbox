@@ -119,9 +119,19 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
 }
 
+func getBody(r *http.Request) (string, error) {
+	bod, err := io.ReadAll(r.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(bod), nil
+}
+
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	var selfHan bool;var resp string
 	switch r.URL.Path[1:] {
+
 	case "no":
 		resp = noReq()
 	case "time":
@@ -381,7 +391,13 @@ func md(r *http.Request) string {
 		if mdStr == "" {
 			mdStr = r.Header.Get(chk)
 		} else { break }
-	}; if mdStr == "" { return "no input" }
+	}; if mdStr == "" {
+		if bod, err := getBody(r); err == nil {
+			if bod != "" {
+				mdStr = bod 
+			} else { return "no input" }
+		} else { return err.Error() }
+	}
 
 	res := markdown.ToHTML([]byte(mdStr), nil, nil)
 
