@@ -17,6 +17,7 @@ import (
 	"github.com/charmbracelet/log"
 	//	elh "github.com/Supraboy981322/ELH"
 	"github.com/Supraboy981322/gomn"
+	"github.com/gomarkdown/markdown"
 )
 
 var (
@@ -134,6 +135,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		resp = deShortenURL(original)
 	case "headers":
 		resp = headers(r)
+	case "md", "markdown":
+		resp = md(r)
 	default:
 		bhtm(w, r)
 		return
@@ -370,6 +373,19 @@ func timeFunc(r *http.Request) string {
 		res = append(res, curTime.String())
 	}
 	return strings.Join(res, " ")
+}
+
+func md(r *http.Request) string {
+	var mdStr string
+	for _, chk := range []string{"md", "markdown"} {
+		if mdStr == "" {
+			mdStr = r.Header.Get(chk)
+		} else { break }
+	}; if mdStr == "" { return "no input" }
+
+	res := markdown.ToHTML([]byte(mdStr), nil, nil)
+
+	return string(res)
 }
 
 /*func endPt(pt map[string]string) string {

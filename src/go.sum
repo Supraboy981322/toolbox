@@ -1,5 +1,3 @@
-github.com/Supraboy981322/gomn v0.0.0-20251119202208-e29d0871d441 h1:UBMMnB7QAfsiiNr259TZEtNnWDHgWzcPDHxXxi6jAqU=
-github.com/Supraboy981322/gomn v0.0.0-20251119202208-e29d0871d441/go.mod h1:mZx9Nmbu5fuNbYL64EhNXGbSBVoO+sw7k9J9HVe1TrM=
 github.com/Supraboy981322/gomn v0.0.0-20251126004559-86cd374d336e h1:UQzzJKYWruh6UBt1HXeveSxRcmzhJ6E+OAhdo6oEFXI=
 github.com/Supraboy981322/gomn v0.0.0-20251126004559-86cd374d336e/go.mod h1:mZx9Nmbu5fuNbYL64EhNXGbSBVoO+sw7k9J9HVe1TrM=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
@@ -20,6 +18,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-logfmt/logfmt v0.6.0 h1:wGYYu3uicYdqXVgoYbvnkrPVXkuLM1p1ifugDMEdRi4=
 github.com/go-logfmt/logfmt v0.6.0/go.mod h1:WYhtIu8zTZfxdn5+rREduYbwxfcBr/Vr6KEVveWlfTs=
+github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a h1:l7A0loSszR5zHd/qK53ZIHMO8b3bBSmENnQ6eKnUT0A=
+github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
