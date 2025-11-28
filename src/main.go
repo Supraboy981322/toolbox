@@ -14,10 +14,14 @@ import (
 	"io/ioutil"
 	"crypto/rand"
 	"encoding/json"
+	"github.com/alecthomas/chroma"
 	"github.com/charmbracelet/log"
-	//	elh "github.com/Supraboy981322/ELH"
 	"github.com/Supraboy981322/gomn"
 	"github.com/gomarkdown/markdown"
+	elh "github.com/Supraboy981322/ELH"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/styles"
+	"github.com/alecthomas/chroma/formatters/html"
 )
 
 var (
@@ -147,6 +151,10 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		resp = headers(r)
 	case "md", "markdown":
 		resp = md(r)
+	case "elh", "ELH":
+		resp = elhFunc(r)
+	case "syntax", "highlight":
+		resp = highlightCode(r)
 	default:
 		bhtm(w, r)
 		return
@@ -402,6 +410,78 @@ func md(r *http.Request) string {
 	res := markdown.ToHTML([]byte(mdStr), nil, nil)
 
 	return string(res)
+}
+
+//currently broken
+func elhFunc(r *http.Request) string {
+	src, err := getBody(r)
+	if err != nil { return err.Error() }
+
+	for _, chk := range []string{"src", "source", "s"} {
+		if src == "" {
+			src = r.Header.Get(chk)
+		} else { break }
+	}; if src == "" { return "no input" }
+
+	res, err := elh.Render(src, r)
+	if err != nil { return err.Error() }
+
+	return res
+}
+
+func highlightCode(r *http.Request) string {
+	var lang string 
+	for _, key := range []string{"l", "lang", "language"} {
+		header := r.Header.Get(key)
+		if header != "" {
+			lang = header
+			break
+		}
+	}; if lang == "" { return "need language" }
+	
+	var style *chroma.Style 
+	for _, key := range []string{"style", "theme", "t"} {
+		header := r.Header.Get(key)
+		if header != "" {
+			style = styles.Get(header)
+			break
+		}
+	}; if style == nil { style = styles.Fallback }
+	
+	var code string
+	var err error
+	for _, key := range []string{"code", "src", "source", "c", "s"} {
+		header := r.Header.Get(key)
+		if header != "" {
+			code = header
+		}
+	}; if code == "" {
+		code, err = getBody(r)
+		if err != nil { return err.Error() }
+	}; if code == "" { return "no code input" }
+
+	lexer := lexers.Get(lang)
+	if lexer == nil {
+		lexer = lexers.Fallback
+	}
+	
+	formatter := html.New(html.WithClasses(true))
+	iterator, err := lexer.Tokenise(nil, code)
+	if err != nil { return err.Error() }
+
+	var res string
+
+	var buf bytes.Buffer
+	err = formatter.Format(&buf, style, iterator)
+	if err != nil { return err.Error() }
+	res += buf.String()
+
+	var cssBuf bytes.Buffer
+	err = formatter.WriteCSS(&cssBuf, style)
+	if err != nil { return err.Error() }
+	res += cssBuf.String()
+
+	return res
 }
 
 /*func endPt(pt map[string]string) string {
