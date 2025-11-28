@@ -4,6 +4,7 @@ import (
 //	"os"
 	"io"
 	"fmt"
+	"time"
 	"bytes"
 	"strings"
 	"strconv"
@@ -122,6 +123,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path[1:] {
 	case "no":
 		resp = noReq()
+	case "time":
+		resp = timeFunc(r)
 	case "discord":
 		resp = discord(r)
 	case "pass", "ranPass", "ran", "random", "password", "ranpass":
@@ -290,6 +293,7 @@ func ranPass(r *http.Request) string {
 	for i = 0; i < l; i++ {
 		bigInt := big.NewInt(int64(len(charSet)))
 		in, err := rand.Int(rand.Reader, bigInt)
+
 		if err != nil {
 			return err.Error()
 		}
@@ -306,6 +310,66 @@ func headers(r *http.Request) string {
 		return err.Error()
 	}
 	return string(jsonHeaders)
+}
+
+func timeFunc(r *http.Request) string {
+	curTime := time.Now()
+	var res []string
+	opts := []string{
+		"month", "mon",
+		"day", "d",
+		"hour", "h",
+		"min", "minute", "m",
+		"sec", "second", "s",
+		"year", "y",
+		"day of week", "dow", "weekday",
+		"nanoseconds", "nc",
+		"miliseconds", "ms",
+		"utc",
+		"unix",
+		"loc", "location",
+		"fmt", "format",
+		"rfc", "RFC3339", "rfc3389",
+	}
+	for _, opt := range opts {
+		set := r.Header.Get(opt)
+		if set != "" {
+			var newVal string
+			switch opt {
+			case "month", "mon":
+				newVal = curTime.Month().String()
+			case "day", "d":
+				newVal = strconv.Itoa(curTime.Day())
+			case "hour", "h":
+				newVal = strconv.Itoa(curTime.Hour())
+			case "min", "minute", "m":
+				newVal = strconv.Itoa(curTime.Minute())
+			case "sec", "second", "s":
+				newVal = strconv.Itoa(curTime.Second())
+			case "year", "y":
+				newVal = strconv.Itoa(curTime.Year())
+			case "day of week", "dow", "weekday":
+				newVal = curTime.Weekday().String()
+			case "loc", "location":
+				newVal = curTime.Location().String()
+			case "utc":
+				newVal = curTime.UTC().String()
+			case "unix":
+				newVal = strconv.FormatInt(curTime.Unix(), 10)
+			case "fmt", "format":
+				newVal = curTime.Format(set)
+			case "rfc", "RFC3339":
+				newVal = curTime.Format(time.RFC3339)
+			default:
+				continue
+			}
+			res = append(res, newVal)
+		}
+	}
+	if len(res) == 0 {
+		res = append(res, curTime.String())
+	}
+	return strings.Join(res, " ")
 }
 
 /*func endPt(pt map[string]string) string {
