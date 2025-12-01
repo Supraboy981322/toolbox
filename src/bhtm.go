@@ -79,7 +79,7 @@ func bhtm(w http.ResponseWriter, r *http.Request) {
 				break
 			} else if !errors.Is(err, os.ErrNotExist) {
 				log.Error(err)
-				srvErr(w)
+				retSrvrErr(w)
 				break
 			}
 		}
@@ -92,7 +92,7 @@ func bhtm(w http.ResponseWriter, r *http.Request) {
 		fileByte, err := os.ReadFile(file)
 		if err != nil {
 			log.Error(err)
-			srvErr(w)
+			retSrvrErr(w)
 			return
 		}
 		fileStr := string(fileByte)
@@ -102,13 +102,13 @@ func bhtm(w http.ResponseWriter, r *http.Request) {
 			workingDir := filepath.Dir(filePathABS)
 			if err != nil {
 				log.Error(err)
-				srvErr(w)
+				retSrvrErr(w)
 				return
 			}
 			result, err = parseAndRun(workingDir, fileStr, r)
 			if err != nil {
 				log.Error(err)
-				srvErr(w)
+				retSrvrErr(w)
 				w.Write([]byte("there appears to be a problem with the "+ext+" file "+file))
 				return
 			}
@@ -136,7 +136,7 @@ func checkIsDir(file string) (string, error) {
 	return file, nil
 }
 
-func srvErr(w http.ResponseWriter) {
+func retSrvrErr(w http.ResponseWriter) {
 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 }
 
