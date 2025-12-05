@@ -2,12 +2,16 @@ package main
 
 import (
 	"io"
+	"os"
 	"fmt"
+	"time"
 	"strings"
 	"strconv"
 	"net/http"
+	"path/filepath"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
+	elh "github.com/Supraboy981322/ELH"
 )
 
 var (
@@ -32,12 +36,23 @@ var (
 		"'", "\"", "<", ">", "/", "?", ".",
 		",",
 	}
+
+	registry = map[string]elh.Runner{
+		"bash": &elh.ExternalRunner{
+			CmdName: "bash",
+			Args:    []string{},
+			Timeout: 5 * time.Second,
+			Env:     os.Environ(),
+		},
+	}
 )
 
 func init() {
 	var ok bool
 	var err error
 	log.SetLevel(log.DebugLevel)
+
+	elh.WebDir = "web"
 
 	log.Info("reading config...")
 	if config, err = gomn.ParseFile("config.gomn"); err != nil {
@@ -150,7 +165,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		ytDlp(w, r)
 		return
 	default:
-		bhtm(w, r)
+		web(w, r)
 		return
 	}
 	log.Infof("[req]: %s", r.URL.Path[1:])
@@ -166,3 +181,10 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		return "failed to get source"
 	}
 }*/
+
+func web(w http.ResponseWriter, r *http.Request) {
+	_, err := elh.ServeWithRegistry(w, r, registry)
+	if err != nil { log.Error(err) }
+	log.Infof("[req]: %s", r.URL.Path)
+	log.Error(filepath.Join(elh.WebDir, r.URL.Path))
+}

@@ -348,6 +348,8 @@ func highlightCode(r *http.Request) string {
 }
 
 func ytDlp(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application./octet-stream")
+
 	format := chkHeaders([]string{
 			"fmt", "format", "f",
 		}, "mp4", r)
@@ -364,24 +366,30 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 
 	args := []string{
 		url,
-		"--output", "-",
+		"-o", "-",
+		"-q",
 		"--recode-video", format,
 		"-f", quality,
 	}
 	
 	cmd := exec.Command("yt-dlp", args...)
 
-	cmd.Stdout = os.Stdout
-
 	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
+		return
+	}; defer stdout.Close()
+
+	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
 		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
-		return 
+		return
 	}
 
 	if _, err := io.Copy(w, stdout); err != nil {
 		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
+		return
 	}
 
 	if err = cmd.Wait(); err != nil {

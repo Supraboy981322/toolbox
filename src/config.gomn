@@ -2,6 +2,15 @@
 ["log level"] := "debug"
 ["discord webhook"] := "your discord webhook"
 
+["dashboard"] := |
+  ["name"] := "toolbox"
+  ["search"] := |
+    ["url"] := "www.google.com/search"
+    ["param"] := "q"
+    ["name"] := "Google"
+  |
+|
+
 ["endpoints"] := |
   ["no"] := |
     ["source"] := "https://naas.isalman.dev/no"
