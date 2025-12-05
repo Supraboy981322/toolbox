@@ -19,7 +19,7 @@
     ["name"] := "Google"
   |
   ["custom css"] := |
-    ["enable"] := true
+    ["enable"] := false
     ["css"] := "h1 { color: red; }"
   |
 |
