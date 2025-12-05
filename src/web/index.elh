@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>toolbox</title>
+    <title><$bash gP -f config.gomn dashboard name $></title>
   </head>
+  <style>
+    <$bash
+      useCustomCSS="$(gP -f config.gomn dashboard custom\ css enable)"
+      if [[ "$useCustomCSS" == "true" ]]; then
+        gP -f config.gomn dashboard custom\ css css
+      else
+        cat web/style.css
+      fi
+    $>
+  </style>
   <body>
     <h1><$bash gP -f config.gomn dashboard name $></h1>
-    <form action="//<$bash gP -f config.gomn dashboard search url $>">
+    <form class="searchbar"
+       action="//<$bash gP -f config.gomn dashboard search url $>">
       <input type="search"
-        name="<$bash gP -f config.gomn dashboard search param $>"
-        placeholder="Search <$bash gP -f config.gomn dashboard search name $>">
+         name="<$bash gP -f config.gomn dashboard search param $>"
+         placeholder="Search <$bash gP -f config.gomn dashboard search name $>">
       <input type="submit" name="searchBtn" value="Go">
     </form>
   </body>

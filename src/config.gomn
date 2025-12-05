@@ -2,6 +2,15 @@
 ["log level"] := "debug"
 ["discord webhook"] := "your discord webhook"
 
+["endpoints"] := |
+  ["no"] := |
+    ["source"] := "https://naas.isalman.dev/no"
+    ["type"] := "mimick"
+    ["recieve"] := "json"
+    ["return"] := 'json:\"reason\"'
+  |
+|
+
 ["dashboard"] := |
   ["name"] := "toolbox"
   ["search"] := |
@@ -9,13 +18,8 @@
     ["param"] := "q"
     ["name"] := "Google"
   |
-|
-
-["endpoints"] := |
-  ["no"] := |
-    ["source"] := "https://naas.isalman.dev/no"
-    ["type"] := "mimick"
-    ["recieve"] := "json"
-    ["return"] := 'json:\"reason\"'
+  ["custom css"] := |
+    ["enable"] := true
+    ["css"] := "h1 { color: red; }"
   |
 |

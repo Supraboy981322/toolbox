@@ -8,7 +8,6 @@ import (
 	"strings"
 	"strconv"
 	"net/http"
-	"path/filepath"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
 	elh "github.com/Supraboy981322/ELH"
@@ -186,5 +185,4 @@ func web(w http.ResponseWriter, r *http.Request) {
 	_, err := elh.ServeWithRegistry(w, r, registry)
 	if err != nil { log.Error(err) }
 	log.Infof("[req]: %s", r.URL.Path)
-	log.Error(filepath.Join(elh.WebDir, r.URL.Path))
 }
