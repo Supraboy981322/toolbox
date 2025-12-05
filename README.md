@@ -19,4 +19,4 @@ simple http server with basic tools.
 - return request headers
 - markdown to html
 - code syntax highlighter with html output
-- A web server (With ELH)
+- A web server (with ELH)
