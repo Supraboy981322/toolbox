@@ -19,4 +19,5 @@ simple http server with basic tools.
 - return request headers
 - markdown to html
 - code syntax highlighter with html output
+- yt-dlp (streams output over http, so not stored on server) 
 - A web server (with ELH)
