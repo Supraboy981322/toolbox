@@ -22,5 +22,21 @@
          placeholder="Search <$bash gP -f config.gomn dashboard search name $>">
       <input type="submit" name="searchBtn" value="Go">
     </form>
+    <div id="stuff">
+      <$bash
+        endPts="$(ls web/endpoints)"
+        amnt="$(ls -l web/endpoints | wc -l)"
+        i=0
+        printf '<div class="left">'
+        for pt in ${endPts}; do
+          if [ "$i" -eq $((amnt/2)) ]; then
+            printf '</div><div class="right">'
+          fi
+          cat web/endpoints/${pt}
+          ((i++))
+        done
+        printf '</div>'
+      $>
+    </div>
   </body>
 </html>

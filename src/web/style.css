@@ -1,3 +1,39 @@
-h1 {
-  color: blue;
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root {
+  padding: 1em;
+  color: #fffffe;
+  padding-top: 0em;
+  background-repeat:repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+  font-family: "DM Serif Display";
+  background-color: rgba(40,40,40,1);
+  background-position: center center;
+  background-image: url("/assets/grain-bg.png");
+}
+
+body {
+  text-align: center;
+}
+
+.searchBox input {
+  margin: auto;
+  display: block
+}
+
+#stuff .left {
+  left: 2.5em;
+  display: block;
+  text-align: left;
+  position: absolute;
+  width: calc(50vw - 5em);
+}
+
+#stuff .right {
+  right: 2.5em;
+  display: block;
+  text-align: left;
+  position: absolute;
+  width: calc(50vw - 5em);
 }

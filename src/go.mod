@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	github.com/Supraboy981322/ELH v0.0.0-20251205202101-5887839fc9a8 // indirect
+	github.com/Supraboy981322/ELH v0.0.0-20251205215208-2aa3f32aa02c // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/colorprofile v0.3.3 // indirect
 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
