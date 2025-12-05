@@ -7,7 +7,7 @@ simple http server with basic tools.
 ## features
 >[!NOTE]
 >this list isn't guaranteed to be up-to-date.
->  each feature has it's own function, (which doesn't call another function)
+>  each feature has a dedicated, (mostly) contained function,
 >    so just read the function names if you want a more up-to-date list
 
 - random string/password generator
