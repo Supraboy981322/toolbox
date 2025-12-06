@@ -348,27 +348,37 @@ func highlightCode(r *http.Request) string {
 }
 
 func ytDlp(w http.ResponseWriter, r *http.Request) {
+	//let client know it's about to 
+	//  recieve raw binary data
 	w.Header().Set("Content-Type", "application./octet-stream")
 
+	//get the format from headers,
+	//  defaults to mp4
 	format := chkHeaders([]string{
 			"fmt", "format", "f",
 		}, "mp4", r)
 
+	//get quality arg from headers
+	//  defaults to `bestvideo+bestaudio/best`
 	quality := chkHeaders([]string{
 			"quality", "qual", "q",
 		}, "bestvideo+bestaudio/best", r)
 
+	//get the url from headers,
+	//  with fallback to the req body
 	url := chkHeaders([]string{
 			"url", "source", "src", "addr",
 			"u", "address", "video", "song",
 			"v",
 		}, getBodyNoErr(r), r)
 
+	//quickly return err if no url 
 	if url == "" {
 		http.Error(w, "no url provided", http.StatusBadRequest)
 		return
 	}
 
+	//args passed to yt-dlp
 	args := []string{
 		url,
 		"-o", "-",
@@ -377,23 +387,29 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 		"-f", quality,
 	}
 	
+	//yt-dlp cmd
 	cmd := exec.Command("yt-dlp", args...)
 
+	//create stdout buffer
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		http.Error(w, err.Error(), srvErr)
 		return
 	}; defer stdout.Close()
 
+	//a multi-buffer output of
+	//  cmd stderr
 	var clientMsgBuff bytes.Buffer
 	errBuff := io.MultiWriter(os.Stderr, &clientMsgBuff)
 	cmd.Stderr = errBuff
 
+	//exec cmd
 	if err := cmd.Start(); err != nil {
 		http.Error(w, err.Error(), srvErr)
 		return
 	}
 
+	//stream yt-dlp output to client
 	if _, err := io.Copy(w, stdout); err != nil {
 		http.Error(w, err.Error(), srvErr)
 		return
