@@ -86,6 +86,9 @@ input[type="text"], input[type="search"] {
       margin-bottom: 1em;
       max-width: calc(100% - 0.5ch);
     }
+    label {
+      display: flex;
+    }
     label[for="length"]{
       display: inline;
     }

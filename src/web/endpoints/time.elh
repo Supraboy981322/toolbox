@@ -1,3 +1,72 @@
-<div class="time">
+<div id="time">
+  <style>
+    #time #fmt, #time .opts {
+      display: none;
+    }
+    #time #useFmt:checked ~ #fmt,
+        #time #useOpts:checked ~ .opts {
+      display: block;
+    }
+  </style>
   <h3>time</h3>
+  <label for="useFmt">Use format</label>
+  <input type="checkbox" id="useFmt">
+  <input type="text" id="fmt" placeholder="format">
+
+  <label for="useOpts">Use options</label>
+  <input type="checkbox" id="useOpts">
+  <span class="opts">
+    <label for="year">
+      year
+      <input type="checkbox" id="year">
+    </label>
+    
+    <label for="month">
+      month
+      <input type="checkbox" id="month">
+    </label>
+    
+    <label for="weekday">
+      weekday
+      <input type="checkbox" id="weekday">
+    </label>
+    
+    <label for="day">
+      day
+      <input type="checkbox" id="day">
+    </label>
+    
+    <label for="hour">
+      hour
+      <input type="checkbox" id="hour">
+    </label>
+    
+    <label for="minute">
+      minute
+      <input type="checkbox" id="minute">
+    </label>
+    
+    <label for="second">
+      second
+      <input type="checkbox" id="second">
+    </label>
+    
+    <label for="ms">
+      miliseconds
+      <input type="checkbox" id="ms">
+    </label>
+    
+    <label for="ns">
+      nanoseconds
+      <input type="checkbox" id="ns">
+    </label>
+    
+    <label for="rfc">
+      rfc
+      <input type="checkbox" id="rfc">
+    </label>
+  </span>
+  <pre><code style="overflow-x:scroll;"id="res">result</code></pre>
+  <script>
+  </script>
 </div>
