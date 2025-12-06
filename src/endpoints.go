@@ -8,19 +8,19 @@ import (
 	"bytes"
 //	"context"
 	"errors"
+	"slices"
 	"strings"
 	"strconv"
 	"net/url"
 	"os/exec"
 	"math/big"
 	"net/http"
-	"io/ioutil"
+	//"io/ioutil"
 	"crypto/rand"
 	"encoding/json"
-  "github.com/charmbracelet/log"
+//  "github.com/charmbracelet/log"
 	"github.com/alecthomas/chroma"
 	"github.com/gomarkdown/markdown"
-	elh "github.com/Supraboy981322/ELH"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
 	"github.com/alecthomas/chroma/formatters/html"
@@ -102,93 +102,110 @@ func noReq() string {
 	return no.Reason
 }
 
+//this one looks a little ugly, I know
+//  I'm writing this comment when I'm
+//    about to make an attempt to clean-up
 func discord(r *http.Request) string {
-	var ok bool;var body string
-	webhook :=  r.Header.Get("webhook")
+	var ok bool
+	webhook := chkHeaders([]string {
+			"webhook", "w", "h", "hook"}, "", r)
 	if webhook == "" {
-		if webhook, ok = config["discord webhook"].(string); !ok || webhook == "your discord webhook" {
+		badWebHooks := []string{"your discord webhook", "", " "}
+		webhook, ok = config["discord webhook"].(string)
+		if !ok || slices.Contains(badWebHooks, webhook) {
 			return "no discord webhook provided or set in config"
 		}
 	}
-	switch r.Method {
-	case http.MethodGet:
-		body = r.Header.Get("body")
-	case http.MethodPost:
-		bodyByte, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			return err.Error()
-		}
-		body = string(bodyByte)
-	default:
-		return "method not allowed"
-	}
 
-	if body == "" {
-		return "no body provided"
-	}
+	body := chkHeaders([]string{
+			"body", "bod", "b", "m", "msg",
+			"message", "text", "t"}, getBodyNoErr(r), r)
+	if body == "" {	return "no message provided" }
 
+	//construct payload
 	payload := map[string]interface{}{
 		"content": body,
 	}
+
 	//json, eww....
 	data, err := json.Marshal(payload)
-	if err != nil {
-		return err.Error()
-	}
-	resp, err := http.Post(webhook, "application/json", bytes.NewBuffer(data))
-	if err != nil {
-		return err.Error()
-	}
-	defer resp.Body.Close()
+	if err != nil { return err.Error() }
+
+	//send request
+	conType := "application/json"
+	datBuff := bytes.NewBuffer(data)
+	_, err = http.Post(webhook, conType, datBuff)
+	if err != nil {	return err.Error() }
+
 	return "sent"
 }
 
+//random password generator
 func ranPass(r *http.Request) string {
-	lenStr := r.Header.Get("len")
+	//get the requested length, 
+	//  fallback to 16
+	lenStr := chkHeaders([]string{
+			}, "16", r)
 	if len(lenStr) >= 18 {
-		log.Warnf("overflow attempt: ip%s",
-			r.RemoteAddr)
-		return "request denied; possible overflow attempt"
-	}
-	if lenStr == "" {
-		lenStr = "16"
+		return "denied; too long"
 	}
 
-	charSet := []string{}
-	if charsRaw := r.Header.Get("bld"); charsRaw == "" {
-		if charsRaw = r.Header.Get("build"); charsRaw == "" {
-			charSet = chars 
-		} else { charSet = strings.Split(charsRaw, "") }
+	//get the set of characters
+	charsRaw := chkHeaders([]string{
+			"bld", "build", "chars", "c",
+			"chars", "char", "charaters"}, "", r)
+
+	//use default set if blank,
+	//  and split into slice
+	var charSet []string
+	if charsRaw == "" { charSet = chars
 	} else { charSet = strings.Split(charsRaw, "") }
 
+	//convert the length string
+	//  to a 64 bit integer 
 	l, err := strconv.ParseInt(lenStr, 10, 64)
-	if err != nil {
-		return err.Error()
-	}
+	if err != nil { return err.Error() }
 
+	//so I can import
+	//  one less module
 	if l < 0 {
 		l = -l
 	}
+	
+	//because who needs a random string 
+	//  any longer than 56527 characters?
 	if l > 56527 {
-		log.Debug("req denied")
-		return "What the hell would you need a random string longer than 56527 characters for?"
+		return "What the hell would you need "+
+				"a cryptographically random string "+
+				"longer than 56527 characters for?"
 	}
+
+	//actually generate
 	var res string
 	var i int64
 	for i = 0; i < l; i++ {
+		//convert to big.Int (for crypto/rand) 
 		bigInt := big.NewInt(int64(len(charSet)))
-		in, err := rand.Int(rand.Reader, bigInt)
 
-		if err != nil {
-			return err.Error()
-		}
+		//generate random integer
+		in, err := rand.Int(rand.Reader, bigInt)
+		if err != nil { return err.Error() }
+
+		//convert to regular integer
 		ranDig := int(in.Int64())
+
+		//add char of random index
+		//  to result
 		res += charSet[ranDig]
 	}
 
+	//finally,
+	//  return the result
 	return res
 }
 
+//no comments needed, just returns
+//  headers as json
 func headers(r *http.Request) string {
 	jsonHeaders, err := json.Marshal(r.Header)
 	if err != nil {
@@ -197,9 +214,15 @@ func headers(r *http.Request) string {
 	return string(jsonHeaders)
 }
 
+//needlessly long function to return
+//  the time (because why not? I'm bored)
 func timeFunc(r *http.Request) string {
+	//current time
 	curTime := time.Now()
+	//placeholder for result
 	var res []string
+
+	//valid options
 	opts := []string{
 		"month", "mon",
 		"day", "d",
@@ -216,6 +239,9 @@ func timeFunc(r *http.Request) string {
 		"fmt", "format",
 		"rfc", "RFC3339", "rfc3389",
 	}
+
+	//get headers
+	//  (I know, eww, long switch statement)
 	for _, opt := range opts {
 		set := r.Header.Get(opt)
 		if set != "" {
@@ -248,20 +274,29 @@ func timeFunc(r *http.Request) string {
 			default:
 				continue
 			}
+			//add to result slice
 			res = append(res, newVal)
 		}
 	}
+
+	//if no valid headers sent,
+	//  default to the current time
 	if len(res) == 0 {
 		res = append(res, curTime.String())
 	}
+
+	//return result as one string
 	return strings.Join(res, " ")
 }
 
 func md(r *http.Request) string {
+	//get md from headers, fallback
+	//  to body, return err if empty
 	mdStr := chkHeaders([]string{
 		"md", "markdown"}, getBodyNoErr(r), r)
 	if mdStr == "" { return "no input" }
 
+	//render HTML as md 
 	res := markdown.ToHTML([]byte(mdStr), nil, nil)
 
 	return string(res)
