@@ -364,6 +364,11 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 			"v",
 		}, getBodyNoErr(r), r)
 
+	if url == "" {
+		http.Error(w, "no url provided", http.StatusBadRequest)
+		return
+	}
+
 	args := []string{
 		url,
 		"-o", "-",
@@ -380,7 +385,9 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 		return
 	}; defer stdout.Close()
 
-	cmd.Stderr = os.Stderr
+	var clientMsgBuff bytes.Buffer
+	errBuff := io.MultiWriter(os.Stderr, &clientMsgBuff)
+	cmd.Stderr = errBuff
 
 	if err := cmd.Start(); err != nil {
 		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
@@ -393,7 +400,11 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = cmd.Wait(); err != nil {
-		http.Error(w, fmt.Sprintf("[yt-dlp]:  ", err), srvErr)
+		errMsg := clientMsgBuff.String()
+		indx := strings.IndexRune(errMsg, ' ')
+		if indx != -1 { errMsg = errMsg[indx+1:] }
+
+		http.Error(w, errMsg, srvErr)
 		return 
 	}
 }
