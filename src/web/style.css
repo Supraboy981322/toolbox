@@ -66,6 +66,12 @@ input[type="text"], input[type="search"] {
     position: absolute;
     width: calc(50vw - 5em);
   }
+  mono {
+    color: white;
+    padding: 0 0.75ch;
+    border-radius: 0.5ch;
+    background: #cccccc55;
+  }
   div div {
     width: 100%;
     padding: 0.1em 1em;
