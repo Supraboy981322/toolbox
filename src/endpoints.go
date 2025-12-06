@@ -26,10 +26,11 @@ import (
 
 //url de-shortener
 func deShortenURL(original string) string {
-	if original == "" {
-		return "no shortened url provided"
-	}
+	//immediately err if no url 
+	if original == "" {	return "url provided"	}
 
+	//create client that just checks
+	//  for redirects
 	client := &http.Client{
 		CheckRedirect: 
 			func(req *http.Request, via []*http.Request) error {
@@ -37,26 +38,35 @@ func deShortenURL(original string) string {
 			},
 	}
 
-	var loc string
-	currentURL := original
+	var loc string //to store final url
+	currentURL := original //start at input url
+
+	//infinite loop only broken by
+	//  hitting final address
 	for {
+		//create request with for current url 
 		req, err := http.NewRequest("HEAD", currentURL, nil)
 		if err != nil {
 			return err.Error()
 		}
 
+		//send request 
 		resp, err := client.Do(req)
 		if err != nil {
+			//check what the err is
 			uerr, ok := err.(*url.Error)
+			//clear err if it's a redirection
 			if ok && uerr.Err == http.ErrUseLastResponse {
 				err = nil
-			} else if err != nil {
-				return err.Error()
-			}
+			//otherwise, return err
+			} else if err != nil { return err.Error()	}
 		}
+
+		//discard response body
 		_, _ = io.Copy(io.Discard, resp.Body)
 		resp.Body.Close()
 
+		//move to next request if redirected
 		if resp.StatusCode >= 300 && resp.StatusCode < 400 {
 			location, err := resp.Location()
 			if err != nil {
@@ -65,13 +75,19 @@ func deShortenURL(original string) string {
 			loc = location.String()
 			currentURL = loc
 		} else {
+			//otherwise,
+			//  break the loop
 			break
 		}
 	}
 	
-	if loc == "" {
-		loc = original
-	};return loc
+	//if never redirected,
+	//  final url is original url
+	if loc == "" { loc = original }
+
+	//otherwise,
+  //  return final
+	return loc
 }
 
 //NaaS
