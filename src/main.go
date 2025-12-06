@@ -159,7 +159,12 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	case "elh", "ELH":
 		resp = elhFunc(r)
 	case "syntax", "highlight":
-		resp = highlightCode(r)
+		var err error
+		resp, err = highlightCode(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	case "yt-dlp", "ytdlp", "yt", "youtube":
 		ytDlp(w, r)
 		return

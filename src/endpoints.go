@@ -7,6 +7,7 @@ import (
 	"time"
 	"bytes"
 //	"context"
+	"errors"
 	"strings"
 	"strconv"
 	"net/url"
@@ -292,56 +293,62 @@ func elhFunc(r *http.Request) string {
 	return res
 }
 
-func highlightCode(r *http.Request) string {
-	//check language from headers 
+func highlightCode(r *http.Request) (string, error) {
+	//get language from headers 
 	var lang string
 	lang = chkHeaders([]string{
 			"l", "lang", "language"}, "", r)
-	if lang == "" { return "need language" }
-	
+	//return err if no language
+	if lang == "" { return "", errors.New("need language") }
+
 	var style *chroma.Style 
-	for _, key := range []string{"style", "theme", "t"} {
+	//get syle from headers
+	if s := chkHeaders([]string{
+				"style", "theme", "t"}, "", r); s != "" {
+		style = styles.Get(s)
+	} else { style = styles.Fallback }
+/*	for _, key := range []string{"style", "theme", "t"} {
 		header := r.Header.Get(key)
 		if header != "" {
 			style = styles.Get(header)
 			break
 		}
-	}; if style == nil { style = styles.Fallback }
+	}; if style == nil { style = styles.Fallback }*/
 	
-	var code string
-	var err error
-	for _, key := range []string{"code", "src", "source", "c", "s"} {
-		header := r.Header.Get(key)
-		if header != "" {
-			code = header
-		}
-	}; if code == "" {
-		code, err = getBody(r)
-		if err != nil { return err.Error() }
-	}; if code == "" { return "no code input" }
+	//get the source code from headers,
+	//  fallback to body
+	code := chkHeaders([]string{
+			"code", "src", "source",
+			"c", "s"}, getBodyNoErr(r), r)
+	if code == "" { return "", errors.New("no code input") }
 
+	//set the lexer for language 
 	lexer := lexers.Get(lang)
 	if lexer == nil {
 		lexer = lexers.Fallback
 	}
 	
+	//set the formatter for html output
 	formatter := html.New(html.WithClasses(true))
 	iterator, err := lexer.Tokenise(nil, code)
-	if err != nil { return err.Error() }
-
+	if err != nil { return "", err }
+ 
 	var res string
 
+	//format the code to html
 	var buf bytes.Buffer
 	err = formatter.Format(&buf, style, iterator)
-	if err != nil { return err.Error() }
+	if err != nil { return "", err }
 	res += buf.String()
 
+	//generate the css
 	var cssBuf bytes.Buffer
 	err = formatter.WriteCSS(&cssBuf, style)
-	if err != nil { return err.Error() }
+	if err != nil { return "", err }
 	res += cssBuf.String()
 
-	return res
+	//return result
+	return res, nil
 }
 
 func ytDlp(w http.ResponseWriter, r *http.Request) {
