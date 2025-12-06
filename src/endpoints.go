@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"io"
-	"fmt"
+//	"fmt"
 	"time"
 	"bytes"
 //	"context"
@@ -381,7 +381,7 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
+		http.Error(w, err.Error(), srvErr)
 		return
 	}; defer stdout.Close()
 
@@ -390,20 +390,29 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 	cmd.Stderr = errBuff
 
 	if err := cmd.Start(); err != nil {
-		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
+		http.Error(w, err.Error(), srvErr)
 		return
 	}
 
 	if _, err := io.Copy(w, stdout); err != nil {
-		http.Error(w, fmt.Sprintf("[yt-dlp]:  %v", err), srvErr)
+		http.Error(w, err.Error(), srvErr)
 		return
 	}
 
 	if err = cmd.Wait(); err != nil {
+		//err buffer to string 
 		errMsg := clientMsgBuff.String()
+
+		//remove the `ERROR: ` part
+		//  of yt-dlp output
 		indx := strings.IndexRune(errMsg, ' ')
 		if indx != -1 { errMsg = errMsg[indx+1:] }
 
+		//remove newline
+		//  (yt-dlp inserts double newline)
+		errMsg = strings.ReplaceAll(errMsg, "\n", "")
+
+		//send err
 		http.Error(w, errMsg, srvErr)
 		return 
 	}
