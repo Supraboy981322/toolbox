@@ -10,12 +10,10 @@
     async function discord() {
       const discordElm = document.getElementById("discord");
       const endPt = "/discord";
-      const msg = discordElm.querySelector("#msg");
+      const msg = discordElm.querySelector("#msg").value;
       fetch(endPt, {
         method: "POST",
-        headers: {
-          "msg": msg,
-        }
+        body: msg
       }).then(resp => {
         if (!resp.ok) {
           throw new Error(`http err. stat: ${resp.status}`);
@@ -25,6 +23,7 @@
         discordElm.querySelector("#resp").innerText = data;
         console.log(`discord() resp: ${data}`);
       }).catch(err => {
+        discordElm.querySelector("#resp").innerText = err;
         console.error("err sending message to discord", err);
       })
     }
