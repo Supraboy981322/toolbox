@@ -3,10 +3,9 @@ package main
 import (
 	"os"
 	"io"
-//	"fmt"
+//	"fmt" //occasionally used for debugging
 	"time"
 	"bytes"
-//	"context"
 	"errors"
 	"slices"
 	"strings"
@@ -15,10 +14,9 @@ import (
 	"os/exec"
 	"math/big"
 	"net/http"
-	//"io/ioutil"
 	"crypto/rand"
 	"encoding/json"
-//  "github.com/charmbracelet/log"
+//  "github.com/charmbracelet/log" //used to need this, might need again 
 	"github.com/alecthomas/chroma"
 	"github.com/gomarkdown/markdown"
 	"github.com/alecthomas/chroma/lexers"
@@ -26,6 +24,7 @@ import (
 	"github.com/alecthomas/chroma/formatters/html"
 )
 
+//url de-shortener
 func deShortenURL(original string) string {
 	if original == "" {
 		return "no shortened url provided"
