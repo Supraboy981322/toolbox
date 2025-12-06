@@ -156,8 +156,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		resp = headers(r)
 	case "md", "markdown":
 		resp = md(r)
-	case "elh", "ELH":
-		resp = elhFunc(r)
+/*	case "elh", "ELH":   //scrapped, it enables remote
+		resp = elhFunc(r)*/  //  code execution
 	case "syntax", "highlight":
 		var err error
 		resp, err = highlightCode(r)

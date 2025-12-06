@@ -276,8 +276,9 @@ func md(r *http.Request) string {
 	return string(res)
 }
 
-//currently broken
-func elhFunc(r *http.Request) string {
+//scrapped because I realized this
+//  enables remote code execution
+/*func elhFunc(r *http.Request) string {
 	src := chkHeaders([]string{
 			"src", "source", "s"}, getBodyNoErr(r), r)
 	if src == "" { return "no input" }
@@ -286,7 +287,7 @@ func elhFunc(r *http.Request) string {
 	if err != nil { return err.Error() }
 
 	return res
-}
+}*/
 
 func highlightCode(r *http.Request) (string, error) {
 	//get language from headers 
