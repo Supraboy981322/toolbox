@@ -36,6 +36,9 @@ var (
 		",",
 	}
 
+	//the webui just uses Bash,
+	//  so I'm only using a Bash
+	//    runner for ELH
 	registry = map[string]elh.Runner{
 		"bash": &elh.ExternalRunner{
 			CmdName: "bash",
