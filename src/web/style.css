@@ -86,6 +86,21 @@ input[type="text"], input[type="search"] {
       margin-bottom: 1em;
       max-width: calc(100% - 0.5ch);
     }
+    label[for="length"]{
+      display: inline;
+    }
+    input[type="range"] {
+      height: 15px;
+      border-radius: 5px;
+      background: grey;
+      outline: none;
+      appearance: none;
+      transition: opacity .2s;
+      width: calc(100% - 10em);
+      &::-moz-range-thumb, &::-webkit-slider-thumb {
+        background: #ffffa9;
+      }
+    }
     input[type="text"] {
       padding: 0 1ch;
       max-width: calc(100% - 1.5ch);
