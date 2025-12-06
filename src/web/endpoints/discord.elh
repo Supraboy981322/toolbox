@@ -1,3 +1,32 @@
-<div class="discord">
+<div id="discord">
   <h3>discord</h3>
+  <input type="text" id="msg" placeholder="message">
+  <button class="send" onclick="discord();">send</button>
+  <p>
+    Server response:
+    <mono id="resp">nothing yet</mono>
+  </p>
+  <script>
+    async function discord() {
+      const discordElm = document.getElementById("discord");
+      const endPt = "/discord";
+      const msg = discordElm.querySelector("#msg");
+      fetch(endPt, {
+        method: "POST",
+        headers: {
+          "msg": msg,
+        }
+      }).then(resp => {
+        if (!resp.ok) {
+          throw new Error(`http err. stat: ${resp.status}`);
+        }
+        return resp.text();
+      }).then(data => {
+        discordElm.querySelector("#resp").innerText = data;
+        console.log(`discord() resp: ${data}`);
+      }).catch(err => {
+        console.error("err sending message to discord", err);
+      })
+    }
+  </script>
 </div>
