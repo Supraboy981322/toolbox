@@ -91,12 +91,14 @@ input[type="text"], input[type="search"] {
       max-width: calc(100% - 1.5ch);
     }
     pre code {
-      margin-top: -0.75em;
       color: black;
       padding: 0.5em;
       display: block;
+      text-wrap: wrap;
       font-size: 1.1em;
       font-weight: bold;
+      margin-top: -0.75em;
+      height: fit-content;
       border-radius: 0.35em;
       width: calc(100% - 1em);
       background-color:#ffffcb;
