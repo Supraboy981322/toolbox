@@ -1,3 +1,25 @@
 <div id="NaaS">
   <h3>No as a Service</h3>
+  <button class="send" onclick="NaaS();">new</button>
+  <pre><code id="res">nothing yet</code></pre>
+  <script>
+    async function NaaS() {
+      const naasElm = document.getElementById("NaaS");
+      const endPt = "/no";
+      fetch(endPt, {
+        method: "POST",
+      }).then(resp => {
+        if (!resp.ok) {
+          throw new Error(`http err. stat: ${resp.status}`);
+        }
+        return resp.text();
+      }).then(data => {
+        naasElm.querySelector("#res").innerText = data;
+        console.log(`NaaS() resp: ${data}`);
+      }).catch(err => {
+        naasElm.querySelector("#res").innerText = err;
+        console.error("err sending message to NaaS", err);
+      })
+    }
+  </script>
 </div>
