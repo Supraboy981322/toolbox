@@ -164,6 +164,9 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		ytDlp(w, r)
 		return
 	default:
+		if r.URL.Path == "/" {
+			r.URL.Path = "/index"
+		}
 		web(w, r)
 		return
 	}

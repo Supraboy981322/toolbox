@@ -2,7 +2,7 @@
 
 :root {
   padding: 1em;
-  color: #fffffe;
+  color: #ffffcb;
   padding-top: 0em;
   background-repeat:repeat;
   background-attachment: fixed;
@@ -17,25 +17,81 @@ body {
   text-align: center;
 }
 
-.searchBox input {
-  margin: auto;
-  display: block
+* { font-family: "DM Serif Display"; }
+
+.searchbar {
+  margin-bottom: 1em;
+  .button {
+    border: none;
+    padding: 0.5ch 1ch;
+    border-radius: 1ch;
+    background-color: #ffffcb;
+    font-size: 2ch;
+  }
+  .bar {
+    height: 4ch;
+    font-size: 2ch;
+    margin-right: 2ch;
+  }
+  .searchBox input {
+    margin: auto;
+    display: block
+  }
 }
 
-#stuff .left {
-  left: 2.5em;
-  display: block;
-  text-align: left;
-  position: absolute;
-  width: calc(50vw - 5em);
+input[type="text"], input[type="search"] {
+  border-radius: 1ch;
+  border: none;
+  padding: 0 1ch;
+  outline: none;
 }
 
-#stuff .right {
-  right: 2.5em;
-  display: block;
-  text-align: left;
-  position: absolute;
-  width: calc(50vw - 5em);
+#stuff {
+  .right {
+    padding: 0; 
+    right: 2.5em;
+    display: block;
+    margin-top: 1em;
+    position: absolute;
+    margin-right: 2em;
+    width: calc(50vw - 5em);
+  }
+  .left {
+    padding: 0;
+    left: 2.5em;
+    margin: 1em 0;
+    display: block;
+    position: absolute;
+    width: calc(50vw - 5em);
+  }
+  div div {
+    width: 100%;
+    padding: 0.1em 1em;
+    border-radius: 1em;
+    margin-bottom: 2em;
+    background-color: #000000;
+    input, button {
+      padding: 0;
+      margin-bottom: 1em;
+      max-width: calc(100% - 0.5ch);
+    }
+    input[type="text"] {
+      padding: 0 1ch;
+      max-width: calc(100% - 1.5ch);
+    }
+    pre code {
+      margin-top: -0.75em;
+      color: black;
+      padding: 0.5em;
+      display: block;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 0.35em;
+      width: calc(100% - 1em);
+      background-color:#ffffcb;
+    }
+  }
+  * { width: 100%; }
 }
 
 @keyframes spin {

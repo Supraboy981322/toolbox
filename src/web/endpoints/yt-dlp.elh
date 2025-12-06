@@ -1,43 +1,56 @@
 <div id="yt-dlp">
   <h3>yt-dlp</h3>
-  <input id="url"
-      type="text"
+  <input id="url" type="text"
       placeholder="video url">
-  <button
-    onclick="ytDlp()">
-    download</button>
+  <button onclick="ytDlp()">
+      download</button>
   <script>
     async function ytDlp() {
+      ytDlpElm = document.getElementById("yt-dlp");
+      //request parameter
       const endPt = "/yt-dlp";
-      const filename = `toolbox_yt-dlp_${Date.now()}.mp4`;
-      const url = document.getElementById("yt-dlp")
-                          .querySelector("#url").value;
+      const url = ytDlpElm.querySelector("#url").value;
+
+      //request headers
       const headers = {
         'fmt': 'mp4',
         'qual':'bestvideo+bestaudio/best',
         'src': url,
       };
 
+      //the output filename
+      const filename = `toolbox_yt-dlp_${Date.now()}.mp4`;
+
       try {
+        //create request
         const resp = await fetch(endPt, {
           method: 'GET',
           headers: headers,
         });
+
+        //check if there's an err
         if (!resp.ok) {
           throw new Error(`HTTP err. stat: ${resp.status}`);
         }
 
+        //get the data blob
         const blob = await resp.blob();
         const blobURL = window.URL.createObjectURL(blob);
 
+        //create link elm
         const a = document.createElement('a');
         a.href = blobURL;
         a.download = filename;
         document.body.appendChild(a);
+
+        //simulate clicking link
         a.click();
+
+        //cleanup
         document.body.removeChild(a);
         window.URL.revokeObjectURL(blobURL);
       } catch (error) {
+        //log err
         console.error('err dl file:', error);
       }
     }
