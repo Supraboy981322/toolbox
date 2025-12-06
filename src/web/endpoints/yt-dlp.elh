@@ -4,9 +4,16 @@
       placeholder="video url">
   <button onclick="ytDlp()">
       download</button>
+  <p class="resp">
+    Status:
+    <mono id="resp">nothing yet</mono>
+  </p>
   <script>
     async function ytDlp() {
       ytDlpElm = document.getElementById("yt-dlp");
+      respElm = ytDlpElm.querySelector("#resp");
+
+      respElm.innerText = "creating request..."
       
       //request parameter
       const endPt = "/yt-dlp";
@@ -23,20 +30,27 @@
       const filename = `toolbox_yt-dlp_${Date.now()}.mp4`;
 
       try {
+        respElm.innerText = "making request..."
         //create request
         const resp = await fetch(endPt, {
           method: 'GET',
           headers: headers,
         });
+       
+        respElm.innerText = "server "+resp.status;
 
         //check if there's an err
         if (!resp.ok) {
           throw new Error(`HTTP err. stat: ${resp.status}`);
         }
+        
 
+        respElm.innerText = "recieving data stream...";
         //get the data blob
         const blob = await resp.blob();
         const blobURL = window.URL.createObjectURL(blob);
+        
+        respElm.innerText = "preparing download..."
 
         //create link elm
         const a = document.createElement('a');
@@ -44,15 +58,18 @@
         a.download = filename;
         document.body.appendChild(a);
 
+        respElm.innerText = "triggering download..."
         //simulate clicking link
         a.click();
 
         //cleanup
         document.body.removeChild(a);
         window.URL.revokeObjectURL(blobURL);
+        respElm.innerText = "done.";
       } catch (error) {
         //log err
         console.error('err dl file:', error);
+        respElm.innerText = error;
       }
     }
   </script>

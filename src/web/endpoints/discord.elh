@@ -2,7 +2,7 @@
   <h3>discord</h3>
   <input type="text" id="msg" placeholder="message">
   <button class="send" onclick="discord();">send</button>
-  <p>
+  <p class="resp">
     Server response:
     <mono id="resp">nothing yet</mono>
   </p>
