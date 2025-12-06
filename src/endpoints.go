@@ -293,14 +293,11 @@ func elhFunc(r *http.Request) string {
 }
 
 func highlightCode(r *http.Request) string {
-	var lang string 
-	for _, key := range []string{"l", "lang", "language"} {
-		header := r.Header.Get(key)
-		if header != "" {
-			lang = header
-			break
-		}
-	}; if lang == "" { return "need language" }
+	//check language from headers 
+	var lang string
+	lang = chkHeaders([]string{
+			"l", "lang", "language"}, "", r)
+	if lang == "" { return "need language" }
 	
 	var style *chroma.Style 
 	for _, key := range []string{"style", "theme", "t"} {
