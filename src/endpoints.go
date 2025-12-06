@@ -75,30 +75,35 @@ func deShortenURL(original string) string {
 	};return loc
 }
 
+//NaaS
+//  (returns parsed json reason as plain-text)
 func noReq() string {
+	//yes, I'm just using their server,
+	//  I'm not packaging a JS project with this
 	resp, err := http.Get("https://naas.isalman.dev/no")
-	if err != nil {
-		return err.Error()
-	}
+	if err != nil {	return err.Error() }
 	defer resp.Body.Close()
+
+	//ensure api is fine
 	if resp.StatusCode != http.StatusOK {
 		return "recieved bad status code from api"
 	}
 
+	//get the response
 	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err.Error()
-	}
+	if err != nil { return err.Error() }
 
+	//for parsing the json 
 	type noJSON struct {
 		Reason string `json:"reason"`
 	}
 
+	//unmarshal into json
 	var no noJSON
-	if err := json.Unmarshal(body, &no); err != nil {
-		return err.Error()
-	}
+	err = json.Unmarshal(body, &no)
+	if err != nil {	return err.Error() }
 
+	//return reason value
 	return no.Reason
 }
 
