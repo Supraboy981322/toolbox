@@ -301,25 +301,19 @@ func highlightCode(r *http.Request) (string, error) {
 	//return err if no language
 	if lang == "" { return "", errors.New("need language") }
 
-	var style *chroma.Style 
 	//get syle from headers
+	var style *chroma.Style 
 	if s := chkHeaders([]string{
 				"style", "theme", "t"}, "", r); s != "" {
 		style = styles.Get(s)
 	} else { style = styles.Fallback }
-/*	for _, key := range []string{"style", "theme", "t"} {
-		header := r.Header.Get(key)
-		if header != "" {
-			style = styles.Get(header)
-			break
-		}
-	}; if style == nil { style = styles.Fallback }*/
 	
 	//get the source code from headers,
 	//  fallback to body
 	code := chkHeaders([]string{
-			"code", "src", "source",
+			"code", "src", "source", 
 			"c", "s"}, getBodyNoErr(r), r)
+	//return err if no code 
 	if code == "" { return "", errors.New("no code input") }
 
 	//set the lexer for language 
