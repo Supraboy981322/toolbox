@@ -47,7 +47,8 @@
 
         //check if there's an err
         if (!resp.ok) {
-          throw new Error(`${resp.statusText}`);
+          const errDat = await resp.text();
+          throw new Error(errDat);
         }
         
 
@@ -75,7 +76,7 @@
       } catch (error) {
         //log err
         console.error('err dl file:', error);
-        respElm.innerText = `${error} ${statusCode}`;
+        respElm.innerText = error;
       }
     }
   </script>
