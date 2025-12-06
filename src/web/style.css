@@ -66,6 +66,9 @@ input[type="text"], input[type="search"] {
     position: absolute;
     width: calc(50vw - 5em);
   }
+  .resp {
+    margin-top: 0.25em;
+  }
   mono {
     color: white;
     padding: 0 0.75ch;
