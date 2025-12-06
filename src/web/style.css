@@ -25,13 +25,15 @@ body {
     border: none;
     padding: 0.5ch 1ch;
     border-radius: 1ch;
-    background-color: #ffffcb;
+    background-color: #ffffcbcc;
     font-size: 2ch;
   }
   .bar {
     height: 4ch;
     font-size: 2ch;
     margin-right: 2ch;
+    background-color: #cccccc55;
+    color: white;
   }
   .searchBox input {
     margin: auto;
@@ -69,7 +71,7 @@ input[type="text"], input[type="search"] {
     padding: 0.1em 1em;
     border-radius: 1em;
     margin-bottom: 2em;
-    background-color: #000000;
+    background-color: #00000055;
     input, button {
       padding: 0;
       margin-bottom: 1em;
