@@ -278,14 +278,9 @@ func md(r *http.Request) string {
 
 //currently broken
 func elhFunc(r *http.Request) string {
-	src, err := getBody(r)
-	if err != nil { return err.Error() }
-
-	for _, chk := range []string{"src", "source", "s"} {
-		if src == "" {
-			src = r.Header.Get(chk)
-		} else { break }
-	}; if src == "" { return "no input" }
+	src := chkHeaders([]string{
+			"src", "source", "s"}, getBodyNoErr(r), r)
+	if src == "" { return "no input" }
 
 	res, err := elh.Render(src, r)
 	if err != nil { return err.Error() }
