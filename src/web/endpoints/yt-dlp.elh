@@ -10,6 +10,7 @@
   </p>
   <script>
     async function ytDlp() {
+      var statusCode;
       ytDlpElm = document.getElementById("yt-dlp");
       respElm = ytDlpElm.querySelector("#resp");
 
@@ -18,6 +19,10 @@
       //request parameter
       const endPt = "/yt-dlp";
       const url = ytDlpElm.querySelector("#url").value;
+      if (url == "") {
+        respElm.innerText = "need url";
+        return
+      }
 
       //request headers
       const headers = {
@@ -37,11 +42,12 @@
           headers: headers,
         });
        
-        respElm.innerText = "server "+resp.status;
+        respElm.innerText = "server "+resp.statusText;
+        statusCode = resp.status
 
         //check if there's an err
         if (!resp.ok) {
-          throw new Error(`HTTP err. stat: ${resp.status}`);
+          throw new Error(`${resp.statusText}`);
         }
         
 
@@ -69,7 +75,7 @@
       } catch (error) {
         //log err
         console.error('err dl file:', error);
-        respElm.innerText = error;
+        respElm.innerText = `${error} ${statusCode}`;
       }
     }
   </script>
