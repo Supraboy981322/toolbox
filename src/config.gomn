@@ -12,6 +12,7 @@
 |
 
 ["dashboard"] := |
+  ["enable"] := true
   ["name"] := "toolbox"
   ["search"] := |
     ["url"] := "www.google.com/search"

@@ -15,6 +15,7 @@ import (
 
 var (
 	port int
+	useWebUI bool
 	config gomn.Map
 	endPtMap map[string]map[string]string
 	srvErr = http.StatusInternalServerError
@@ -80,11 +81,22 @@ func init() {
 
 		log.Infof("log level set to:  %s", deLvl)
 	} else { log.Fatal("failed to get log level") }
-	
+
+	//check if dashboard is enabled
+	//  (I know, this looks highly compressed... because it is)
+	if dashBoard, ok := config["dashboard"].(gomn.Map); ok {
+		if useWebUI, ok = dashBoard["enable"].(bool); !ok {
+			log.Fatal("dashboard --> enable is invalid")
+		} else if useWebUI { log.Debug("dashboard is enabled")
+		} else { log.Warn("web ui is disabled") }
+	} else { log.Fatal("failed to parse dashboard config") } 
+
+	//set the port from config
 	if port, ok = config["port"].(int); !ok {
 		log.Fatal("failed to get server port")
 	} else { log.Debug("success reading server port") }
 
+	//not used yet, but maps custom endpoints
 	ptMapTmp := make(map[string]map[string]string)
 	if endPtsRaw, ok := config["endpoints"].(gomn.Map); ok {
 		log.Debug("found custom endpoints")
@@ -175,7 +187,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			r.URL.Path = "/index"
 		}
-		web(w, r)
+		if useWebUI { web(w, r)
+		} else { http.Error(w, "404 not found", 404) }
 		return
 	}
 	log.Infof("[req]: %s", r.URL.Path[1:])
