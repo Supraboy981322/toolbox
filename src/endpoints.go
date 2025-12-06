@@ -258,18 +258,9 @@ func timeFunc(r *http.Request) string {
 }
 
 func md(r *http.Request) string {
-	var mdStr string
-	for _, chk := range []string{"md", "markdown"} {
-		if mdStr == "" {
-			mdStr = r.Header.Get(chk)
-		} else { break }
-	}; if mdStr == "" {
-		if bod, err := getBody(r); err == nil {
-			if bod != "" {
-				mdStr = bod 
-			} else { return "no input" }
-		} else { return err.Error() }
-	}
+	mdStr := chkHeaders([]string{
+		"md", "markdown"}, getBodyNoErr(r), r)
+	if mdStr == "" { return "no input" }
 
 	res := markdown.ToHTML([]byte(mdStr), nil, nil)
 
