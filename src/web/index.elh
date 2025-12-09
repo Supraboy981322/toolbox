@@ -12,10 +12,6 @@
       else
         cat web/style.css
       fi
-#      mobileHeader=$(jq -r '."Sec-Ch-Ua-Mobile"[0]' headers.json)
-#      if [[ "${mobileHeader}" == "?1" ]]; then 
-#        cat web/mobile.css 
-#      fi
     $>
   </style>
   <body>
@@ -30,22 +26,12 @@
     </form>
     <div id="stuff">
       <$bash
-#        mobileHeader=$(jq -r '."Sec-Ch-Ua-Mobile"[0]' headers.json)
-#        if [[ "${mobileHeader}" == "?1" ]]; then 
-#          platform="mobile"
-#        else 
-          platform="desktop"
-#        fi
         endPts="$(ls web/endpoints)"
         amnt="$(ls -l web/endpoints | wc -l)"
         i=0
-        if [[ "${platform}" == "desktop" ]]; then
-          printf '<div class="left">'
-        else
-          printf '<dev class="mobile">'
-        fi
+        printf '<div class="left">'
         for pt in ${endPts}; do
-          if [ "$i" -eq $((amnt/2)) ] && [[ "${platform}" == "desktop" ]]; then
+          if [ "$i" -eq $((amnt/2)) ]; then
             printf '</div><div class="right">'
           fi
           cat web/endpoints/${pt}
