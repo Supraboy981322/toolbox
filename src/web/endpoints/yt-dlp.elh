@@ -1,5 +1,5 @@
-<div id="yt-dlp">
-  <h3>yt-dlp</h3>
+<h3 class="ptName">yt-dlp</h3>
+<div id="yt-dlp" class="pt">
   <input id="url" type="text"
       placeholder="video url">
   <button onclick="ytDlp()">

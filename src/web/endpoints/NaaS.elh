@@ -1,5 +1,5 @@
-<div id="NaaS">
-  <h3>No as a Service</h3>
+<h3 class="ptName">No as a Service</h3>
+<div id="NaaS" class="pt">
   <button class="send" onclick="NaaS();">new</button>
   <pre><code id="res">nothing yet</code></pre>
   <script>

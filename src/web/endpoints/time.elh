@@ -1,4 +1,5 @@
-<div id="time">
+<h3 class="ptName">time</h3>
+<div id="time" class="pt">
   <style>
     #time #fmt, #time .opts {
       display: none;
@@ -8,7 +9,6 @@
       display: block;
     }
   </style>
-  <h3>time</h3>
   <label for="useFmt">Use format</label>
   <input type="checkbox" id="useFmt">
   <input type="text" id="fmt" placeholder="format">

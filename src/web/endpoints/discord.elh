@@ -1,5 +1,5 @@
-<div id="discord">
-  <h3>discord</h3>
+<h3 class="ptName">discord</h3>
+<div id="discord" class="pt">
   <input type="text" id="msg" placeholder="message">
   <button class="send" onclick="discord();">send</button>
   <p class="resp">

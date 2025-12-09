@@ -1,5 +1,5 @@
-<div id="ranPass">
-  <h3>Password Gen.</h3>
+<h3 class="ptName">Password Gen.</h3>
+<div id="ranPass" class="pt">
   <span class="opts"
       style="text-align:center;">
     <input type="text"

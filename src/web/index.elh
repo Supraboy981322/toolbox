@@ -31,14 +31,21 @@
         i=0
         printf '<div class="left">'
         for pt in ${endPts}; do
+          ptName="$(printf ${pt} | sed 's|.elh$||')"
           if [ "$i" -eq $((amnt/2)) ]; then
-            printf '</div><div class="right">'
+            printf '</div>'
+            printf '<div class="right">'
           fi
+          printf '<div class="itm" open="false" onclick="dropDown(this, event)">'
           cat web/endpoints/${pt}
+          printf '</div>'
           ((i++))
         done
         printf '</div>'
       $>
     </div>
   </body>
+  <script>
+    <$bash cat web/script.js $>
+  </script>
 </html>
