@@ -3,26 +3,26 @@
   <head>
     <title><$bash gP -f config.gomn dashboard name $></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      <$bash
+        printf "@import url('$(gP -f config.gomn dashboard custom\ css font\ import)');"
+        printf "\n:root {\n"
+        printf "  --primary: $(gP -f config.gomn dashboard custom\ css colors primary);\n"
+        printf "  --secondary: $(gP -f config.gomn dashboard custom\ css colors secondary);\n"
+        printf "  --tertiary: $(gP -f config.gomn dashboard custom\ css colors tertiary);\n"
+        printf "  --bg: $(gP -f config.gomn dashboard custom\ css colors background);\n"
+        printf "  --sTcolor: $(gP -f config.gomn dashboard custom\ css colors secondary\ text\ color);\n"
+        printf "  --pTcolor: $(gP -f config.gomn dashboard custom\ css colors primary\ text\ color);\n"
+        printf "}\n"
+        useCustomCSS="$(gP -f config.gomn dashboard custom\ css enable)"
+        if [[ "$useCustomCSS" == "true" ]]; then
+          gP -f config.gomn dashboard custom\ css css
+        else
+          cat web/style.css
+        fi
+      $>
+    </style>
   </head>
-  <style>
-    <$bash
-      printf "@import url('$(gP -f config.gomn dashboard custom\ css font\ import)');"
-      printf "\n:root {\n"
-      printf "  --primary: $(gP -f config.gomn dashboard custom\ css colors primary);\n"
-      printf "  --secondary: $(gP -f config.gomn dashboard custom\ css colors secondary);\n"
-      printf "  --tertiary: $(gP -f config.gomn dashboard custom\ css colors tertiary);\n"
-      printf "  --bg: $(gP -f config.gomn dashboard custom\ css colors background);\n"
-      printf "  --sTcolor: $(gP -f config.gomn dashboard custom\ css colors secondary\ text\ color);\n"
-      printf "  --pTcolor: $(gP -f config.gomn dashboard custom\ css colors primary\ text\ color);\n"
-      printf "}\n"
-      useCustomCSS="$(gP -f config.gomn dashboard custom\ css enable)"
-      if [[ "$useCustomCSS" == "true" ]]; then
-        gP -f config.gomn dashboard custom\ css css
-      else
-        cat web/style.css
-      fi
-    $>
-  </style>
   <body>
     <h1><$bash gP -f config.gomn dashboard name $></h1>
     <form class="searchbar"
@@ -53,8 +53,8 @@
         printf '</div>'
       $>
     </div>
+    <script>
+      <$bash cat web/script.js $>
+    </script>
   </body>
-  <script>
-    <$bash cat web/script.js $>
-  </script>
 </html>

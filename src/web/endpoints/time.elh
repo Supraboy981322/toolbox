@@ -66,7 +66,7 @@
       <input type="checkbox" id="rfc">
     </label>
   </span>
-  <pre><code style="overflow-x:scroll;"id="res">result</code></pre>
+  <pre><code style="overflow-x:scroll;" id="res">result</code></pre>
   <script>
   </script>
 </div>
