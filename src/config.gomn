@@ -22,5 +22,14 @@
   ["custom css"] := |
     ["enable"] := false
     ["css"] := "h1 { color: red; }"
+    ["font import"] := "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap"
+    ["colors"] := |
+      ["primary"] := "#ffffcb"
+      ["secondary"] := "#cccccc55"
+      ["tertiary"] := "#00000055"
+      ["background"] := "rgba(40, 40, 40 ,1)"
+      ["secondary text color"] := "#ffffff"
+      ["primary text color"] := "#000000"
+    |
   |
 |

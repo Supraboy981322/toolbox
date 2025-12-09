@@ -1,14 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
-
 :root {
   padding: 1em;
-  color: #ffffcb;
+  color: var(--primary);
   padding-top: 0em;
   background-repeat:repeat;
   background-attachment: fixed;
   background-blend-mode: multiply;
   font-family: "DM Serif Display";
-  background-color: rgba(40,40,40,1);
+  background-color: var(--bg);
   background-position: center center;
   background-image: url("/assets/grain-bg.png");
 }
@@ -31,7 +29,7 @@ h1, h2, h3, h4 { user-select: none; }
     font-size: 2ch;
     padding: 0.5ch 1ch;
     border-radius: 1ch;
-    background-color: #ffffcbcc;
+    background-color: var(--primary);
   }
   .placeholderBtn {
     display: none;
@@ -40,8 +38,8 @@ h1, h2, h3, h4 { user-select: none; }
     height: 4ch;
     font-size: 2ch;
     margin-right: 2ch;
-    background-color: #cccccc55;
-    color: white;
+    background-color: var(--secondary);
+    color: var(--sTcolor);
   }
   .searchBox input {
     margin: auto;
@@ -78,16 +76,16 @@ input[type="text"], input[type="search"] {
     margin-top: 0.25em;
   }
   mono {
-    color: white;
+    color: var(--sTcolor);
     padding: 0 0.75ch;
     border-radius: 0.5ch;
-    background: #cccccc55;
+    background: var(--secondary);
   }
   div > .itm {
     width: 100%;
     margin: 1em 0;
     border-radius: 1em;
-    background-color: #00000055;
+    background-color: var(--tertiary);
     &> .ptName {
       font-size: 4vw;
       margin: 0;
@@ -125,13 +123,13 @@ input[type="text"], input[type="search"] {
         appearance: none;
         background: grey;
         border-radius: 5px;
-        accent-color: #ffffa9;
+        accent-color: var(--primary);
         transition: opacity .2s;
         width: calc(100% - 10em);
         &::-moz-range-thumb, &::-webkit-slider-thumb {
           border: none;
           outline: none;
-          background: #ffffa9;
+          background: var(--primary);
         }
       }
       input[type="text"] {
@@ -139,7 +137,7 @@ input[type="text"], input[type="search"] {
         max-width: calc(100% - 1.5ch);
       }
       pre code {
-        color: black;
+        color: var(--pTcolor);
         padding: 0.5em;
         display: block;
         text-wrap: wrap;
@@ -149,7 +147,7 @@ input[type="text"], input[type="search"] {
         height: fit-content;
         border-radius: 0.35em;
         width: calc(100% - 1em);
-        background-color:#ffffcb;
+        background-color: var(--primary);
       }
     }
   }

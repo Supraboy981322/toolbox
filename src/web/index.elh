@@ -6,6 +6,15 @@
   </head>
   <style>
     <$bash
+      printf "@import url('$(gP -f config.gomn dashboard custom\ css font\ import)');"
+      printf "\n:root {\n"
+      printf "  --primary: $(gP -f config.gomn dashboard custom\ css colors primary);\n"
+      printf "  --secondary: $(gP -f config.gomn dashboard custom\ css colors secondary);\n"
+      printf "  --tertiary: $(gP -f config.gomn dashboard custom\ css colors tertiary);\n"
+      printf "  --bg: $(gP -f config.gomn dashboard custom\ css colors background);\n"
+      printf "  --sTcolor: $(gP -f config.gomn dashboard custom\ css colors secondary\ text\ color);\n"
+      printf "  --pTcolor: $(gP -f config.gomn dashboard custom\ css colors primary\ text\ color);\n"
+      printf "}\n"
       useCustomCSS="$(gP -f config.gomn dashboard custom\ css enable)"
       if [[ "$useCustomCSS" == "true" ]]; then
         gP -f config.gomn dashboard custom\ css css
