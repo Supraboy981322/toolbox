@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>fizzbuzz</title>
+  </head>
+  <body>
+    <p>foo</p>
+  </body>
+  <script>
+    <$bash
+      cat script.js
+    $>
+  </script>
+</html>

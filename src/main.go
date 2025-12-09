@@ -8,6 +8,8 @@ import (
 	"strings"
 	"strconv"
 	"net/http"
+	"encoding/json"
+	"path/filepath"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
 	elh "github.com/Supraboy981322/ELH"
@@ -169,6 +171,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		resp = deShortenURL(original)
 	case "headers":
 		resp = headers(r)
+		w.Header().Set("Content-Type", "text/json")
 	case "md", "markdown":
 		resp = md(r)
 /*	case "elh", "ELH":   //scrapped, it enables remote
@@ -206,7 +209,28 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 }*/
 
 func web(w http.ResponseWriter, r *http.Request) {
-	_, err := elh.ServeWithRegistry(w, r, registry)
+	//crappy temporary workaround for
+	//  reading headers when using elh
+	dir := filepath.Dir(r.URL.Path[1:])
+	filePath := filepath.Join(dir, "headers.json")
+	log.Warn(filePath)
+	ext := filepath.Ext(r.URL.Path)
+	if ext == ".elh" || ext == "" {
+		jsonHeaders, err := json.Marshal(r.Header)
+		if err != nil {
+			log.Errorf("%v", err)
+		}
+		err = os.WriteFile(filePath, jsonHeaders, 0644)
+		if err != nil { log.Errorf("%v", err) }
+	}
+
+
+	resp, err := elh.ServeWithRegistry(w, r, registry)
 	if err != nil { log.Error(err) }
-	log.Infof("[req]: %s", r.URL.Path)
+	log.Infof("[req]: %s", resp)
+
+	if ext == ".elh" || ext == "" {
+		err = os.Remove(filePath)
+		if err != nil { log.Errorf("%v", err) }
+	}
 }

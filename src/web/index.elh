@@ -24,12 +24,21 @@
     </form>
     <div id="stuff">
       <$bash
+        if [[ $(jq '."Sec-Ch-Ua-Mobile"[0]' headers.json) -eq "?1" ]]; then 
+          platform="mobile"
+        else 
+          platform="desktop"
+        fi
         endPts="$(ls web/endpoints)"
         amnt="$(ls -l web/endpoints | wc -l)"
         i=0
-        printf '<div class="left">'
+        if [[ "${platform}" == "desktop" ]]; then
+          printf '<div class="left">'
+        else
+          printf '<dev class="mobile">'
+        fi
         for pt in ${endPts}; do
-          if [ "$i" -eq $((amnt/2)) ]; then
+          if [ "$i" -eq $((amnt/2)) ] && [[ "${platform}" == "desktop" ]]; then
             printf '</div><div class="right">'
           fi
           cat web/endpoints/${pt}
