@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <title><$bash gP -f config.gomn dashboard name $></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <style>
     <$bash
@@ -11,6 +12,10 @@
       else
         cat web/style.css
       fi
+#      mobileHeader=$(jq -r '."Sec-Ch-Ua-Mobile"[0]' headers.json)
+#      if [[ "${mobileHeader}" == "?1" ]]; then 
+#        cat web/mobile.css 
+#      fi
     $>
   </style>
   <body>
@@ -21,14 +26,16 @@
          name="<$bash gP -f config.gomn dashboard search param $>"
          placeholder="Search <$bash gP -f config.gomn dashboard search name $>">
       <input type="submit" name="searchBtn" class="button" value="Go">
+      <input type="button" name="placeholder" class="placeholderBtn" value="tbd">
     </form>
     <div id="stuff">
       <$bash
-        if [[ $(jq '."Sec-Ch-Ua-Mobile"[0]' headers.json) -eq "?1" ]]; then 
-          platform="mobile"
-        else 
+#        mobileHeader=$(jq -r '."Sec-Ch-Ua-Mobile"[0]' headers.json)
+#        if [[ "${mobileHeader}" == "?1" ]]; then 
+#          platform="mobile"
+#        else 
           platform="desktop"
-        fi
+#        fi
         endPts="$(ls web/endpoints)"
         amnt="$(ls -l web/endpoints | wc -l)"
         i=0
