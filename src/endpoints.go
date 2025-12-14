@@ -412,6 +412,12 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 			"v",
 		}, getBodyNoErr(r), r)
 
+  extraArgsR := chkHeaders([]string{
+      "a", "args", "arg",
+    }, "", r)
+
+  extraArgs := strings.Split(extraArgsR, ";")
+
 	//quickly return err if no url 
 	if url == "" {
 		http.Error(w, "no url provided", http.StatusBadRequest)
@@ -425,7 +431,7 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 		"-q",
 		"--recode-video", format,
 		"-f", quality,
-	}
+	};args = append(args, extraArgs...)
 	
 	//yt-dlp cmd
 	cmd := exec.Command("yt-dlp", args...)
