@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"io"
-//	"fmt" //occasionally used for debugging
+	"fmt"
 	"time"
 	"bytes"
 	"errors"
@@ -397,6 +397,10 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 	format := chkHeaders([]string{
 			"fmt", "format", "f",
 		}, "mp4", r)
+	
+	outHeader := fmt.Sprintf("attachment; filename=\"yt-dlpServer_%s.%s\"",
+				time.Now().Format("2006-01-02_15-04-05"), format)
+	w.Header().Set("Content-Disposition", outHeader)
 
 	//get quality arg from headers
 	//  defaults to `bestvideo+bestaudio/best`
