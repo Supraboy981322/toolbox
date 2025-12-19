@@ -1,0 +1,34 @@
+<h3 class="ptName">Calculator</h3>
+<div id="calculator" class="pt">
+  <style>
+    #colorPicker {
+      &> .btns {
+        span {
+          background-color: #cccccc33;
+          font-size: 5em;
+          width: 2ch;
+          overflow: hidden;
+          white-space: nowrap; 
+          height: 2ch;
+          max-height: 2ch;
+          align-contents: center;
+          display: inline-block;
+        }
+      }
+    }
+  </style>
+  <div class="input" contenteditable="true"></div>
+  <div class="btns">
+    <span onclick="updateCalc(this)">+</span>
+    <span onclick="updateCalc(this)">-</span>
+    <span onclick="updateCalc(this)">&divide</span>
+    <span onclick="updateCalc(this)">&times</span>
+    <span onclick="updateCalc(this)">%</span>
+    <span onclick="updateCalc(this)">=</span>
+  </div>
+  <script>
+    function calculator(action, input) {
+
+    }
+  </script>
+</div>

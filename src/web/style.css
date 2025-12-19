@@ -30,6 +30,10 @@ button {
   cursor: pointer;
 }
 
+input, button, .button, .itm {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .searchbar {
   margin-bottom: 1em;
   .button, .placeholderBtn {
