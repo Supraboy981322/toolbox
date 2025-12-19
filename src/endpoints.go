@@ -393,10 +393,10 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application./octet-stream")
 
 	//get the format from headers,
-	//  defaults to mp4
+	//  defaults to webm
 	format := chkHeaders([]string{
 			"fmt", "format", "f",
-		}, "mp4", r)
+		}, "webm", r)
 	
 	outHeader := fmt.Sprintf("attachment; filename=\"yt-dlpServer_%s.%s\"",
 				time.Now().Format("2006-01-02_15-04-05"), format)
@@ -421,6 +421,7 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
     }, "", r)
 
   extraArgs := strings.Split(extraArgsR, ";")
+	fmt.Println(extraArgs)
 
 	//quickly return err if no url 
 	if url == "" {
@@ -469,10 +470,16 @@ func ytDlp(w http.ResponseWriter, r *http.Request) {
 		//err buffer to string 
 		errMsg := clientMsgBuff.String()
 
-		//remove the `ERROR: ` part
-		//  of yt-dlp output
-		indx := strings.IndexRune(errMsg, ' ')
-		if indx != -1 { errMsg = errMsg[indx+1:] }
+		var indx int
+		for _, l := range strings.Split(errMsg, "\n") {
+			//remove the error type part
+			//  of yt-dlp output
+			indx = strings.IndexRune(l, ':')
+			if indx == -1 { continue }
+			errTyp := l[0:indx]
+			errMsg = l[indx+1:]
+			if errTyp == "ERROR" { break }
+		}
 
 		//remove newline
 		//  (yt-dlp inserts double newline)
