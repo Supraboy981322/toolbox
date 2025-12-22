@@ -233,12 +233,12 @@ func headers(r *http.Request) string {
 	var res string
 
 	switch strings.ToLower(format) {
-   case "json":
+   case "json", "j":
 		jsonHeaders, err := json.Marshal(r.Header)
 		if err != nil { return err.Error() }
 		res = string(jsonHeaders)
 
-   case "gomn":
+   case "gomn", "g":
 		for key, vals := range r.Header {
 			res += "[\""+key+"\"] := {\n"
 			for _, val := range vals {
