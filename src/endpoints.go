@@ -234,9 +234,15 @@ func headers(r *http.Request) string {
 
 	switch strings.ToLower(format) {
    case "json", "j":
-		jsonHeaders, err := json.Marshal(r.Header)
-		if err != nil { return err.Error() }
-		res = string(jsonHeaders)
+		res += "{\n"
+		for key, vals := range r.Header {
+			res += "  \""+key+"\": [\n"
+			for _, val := range vals {
+				res += "    \""+val+"\",\n"
+			}
+			res = res[0:len(res)-2]
+			res += "\n  ],\n"
+		};res = res[0:len(res)-2]+"\n}\n"
 
    case "gomn", "g":
 		for key, vals := range r.Header {
@@ -257,9 +263,11 @@ func headers(r *http.Request) string {
 			res += "\n"
 		}
 
-	 default: res = "invalid format\n  Accepts: 'json' or 'key-value'"
+	 default: return "invalid format\n  Accepts: 'json' or 'key-value'"
 	}
 
+	//remove trailing newline
+	res = res[0:len(res)-1]
 	return res
 }
 
