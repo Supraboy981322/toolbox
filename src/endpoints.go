@@ -227,11 +227,40 @@ func ranPass(r *http.Request) string {
 //no comments needed, just returns
 //  headers as json
 func headers(r *http.Request) string {
-	jsonHeaders, err := json.Marshal(r.Header)
-	if err != nil {
-		return err.Error()
+	format := chkHeaders([]string{
+			"format", "f", "fmt"}, "key-value", r)
+
+	var res string
+
+	switch strings.ToLower(format) {
+   case "json":
+		jsonHeaders, err := json.Marshal(r.Header)
+		if err != nil { return err.Error() }
+		res = string(jsonHeaders)
+
+   case "gomn":
+		for key, vals := range r.Header {
+			res += "[\""+key+"\"] := {\n"
+			for _, val := range vals {
+				res += "  \""+val+"\",\n"
+			}
+			res += "}\n"
+		}
+
+	 case "kv", "k-v", "k_v", "k v": fallthrough
+	 case "key-value", "key value", "key_value":
+		for key, vals := range r.Header {
+			res += key+": "
+			for _, val := range vals {
+				res += val+" "
+			}
+			res += "\n"
+		}
+
+	 default: res = "invalid format\n  Accepts: 'json' or 'key-value'"
 	}
-	return string(jsonHeaders)
+
+	return res
 }
 
 //needlessly long function to return
