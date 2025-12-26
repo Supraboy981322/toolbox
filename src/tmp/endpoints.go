@@ -165,7 +165,7 @@ func ranPass(r *http.Request) string {
 	//get the requested length, 
 	//  fallback to 16
 	lenStr := chkHeaders([]string{
-		"len", "l", "length"}, "16", r)
+			}, "16", r)
 	if len(lenStr) >= 18 {
 		return "denied; too long"
 	}
