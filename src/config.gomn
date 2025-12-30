@@ -2,15 +2,6 @@
 ["log level"] := "debug"
 ["discord webhook"] := "your discord webhook"
 
-["endpoints"] := |
-  ["no"] := |
-    ["source"] := "https://naas.isalman.dev/no"
-    ["type"] := "mimick"
-    ["recieve"] := "json"
-    ["return"] := 'json:\"reason\"'
-  |
-|
-
 ["dashboard"] := |
   ["enable"] := true
   ["name"] := "toolbox"
@@ -22,14 +13,26 @@
   ["custom css"] := |
     ["enable"] := false
     ["css"] := "h1 { color: red; }"
-    ["font import"] := "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap"
+    ["fonts"] := |
+      ["primary"] := ""
+      ["title"] := ""
+    |
     ["colors"] := |
-      ["primary"] := "#ffffcb"
+      ["sidebar bg"] := "#3b4252"
+      ["topbar bg"] := "#4c566a"
+      ["primary"] := "#ebcb8b"
       ["secondary"] := "#cccccc55"
       ["tertiary"] := "#00000055"
-      ["background"] := "rgba(40, 40, 40 ,1)"
+      ["background"] := "#2e3440"
       ["secondary text color"] := "#ffffff"
       ["primary text color"] := "#000000"
     |
+  |
+|
+
+["advanced"] := |
+  ["elh"] := |
+    ["suppress requests"] := false
+    ["suppress ELH errors"] := false
   |
 |
