@@ -104,16 +104,21 @@ func parseDashConf() (bool, string) {
 	//check if dashboard is enabled
 	//  (I know, this looks highly compressed... because it is)
 	if dashBoard, ok := config["dashboard"].(gomn.Map); ok {
-		if serverName, ok = dashBoard["name"].(string); !ok {
-			serverName = "toolbox"
-			log.Warn("server is not named, defaulting to "+
-						"\""+serverName+"\" (a very creative and unique name)")
-		}
+		//checked at end of func
+		serverName, _ = dashBoard["name"].(string)
+
 		if useWebUI, ok = dashBoard["enable"].(bool); !ok {
 			return false, "value of \"enable\" in the dashboard config is not a bool"
-		} else if useWebUI { log.Debug("dashboard is enabled")
+		} else if useWebUI {
+			log.Debug("dashboard is enabled")
 		} else { log.Warn("web ui is disabled") }
 	} else { return false, "dashboard config is not a map" } 
+
+	if serverName == "" {
+		serverName = "toolbox"
+		log.Warn("server is not named, defaulting to "+
+					"\""+serverName+"\" (a very creative and unique name)")
+	}
 
 	return true, ""
 }
