@@ -20,6 +20,7 @@ var (
 	port int
 	useWebUI bool
 	config gomn.Map
+	serverName string
 	endPtMap map[string]map[string]string
 	srvErr = http.StatusInternalServerError
 
@@ -72,6 +73,9 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	switch strings.ToLower(r.URL.Path[1:]) {
+	case "help":
+		helpHan(w, r)
+		selfHan = true
 	case "no":
 		resp = noReq()
 	case "e", "echo":
