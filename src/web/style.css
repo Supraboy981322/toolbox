@@ -1,236 +1,193 @@
-:root {
-  padding: 1em;
-  color: var(--primary);
-  padding-top: 0em;
-  background-repeat:repeat;
-  background-attachment: fixed;
-  background-blend-mode: multiply;
-  font-family: "DM Serif Display";
-  background-color: var(--bg);
-  background-position: center center;
-  background-image: url("/assets/grain-bg.png");
-}
-
-body {
-  text-align: center;
+:root, body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--primary-font);
 }
 
 * {
+  font-size: 1.05em;
   transition: 0.15s;
-  font-family: "DM Serif Display";
+  font-family: var(--primary-font);
 }
 
-h1, h2, h3, h4 {
-  user-select: none;
+body {
+  background-color: var(--bg);
 }
 
 input[type="button"],
 input[type="submit"],
 button {
   cursor: pointer;
+  font-family: var(--title-font);
 }
 
-input, button, .button, .itm {
+input, button, .button, #itm {
   -webkit-tap-highlight-color: transparent;
 }
 
-.searchbar {
-  margin-bottom: 1em;
-  .button, .placeholderBtn {
-    border: none;
-    font-size: 2ch;
-    padding: 0.5ch 1ch;
-    border-radius: 1ch;
-    background-color: var(--primary);
-    &:hover {
-      font-size: 2.15em;
-      padding: 0.1ch 1ch;
-    }
-  }
-  .placeholderBtn {
-    display: none;
-  }
-  .bar {
-    height: 4ch;
-    font-size: 2ch;
-    margin-right: 2ch;
-    background-color: var(--secondary);
-    color: var(--sTcolor);
-  }
-  .searchBox input {
-    margin: auto;
-    display: block
-  }
-}
-
-input[type="text"], input[type="search"] {
-  border: none;
-  outline: none;
-  padding: 0 1ch;
-  border-radius: 1ch;
-}
-
-#stuff {
-  .right {
-    padding: 0; 
-    right: 2.5em;
-    display: block;
-    margin-top: 1em;
-    margin-right: 2em;
-    position: absolute;
-    width: calc(50vw - 5em);
-  }
-  .left {
-    padding: 0;
-    left: 2.5em;
-    margin: 1em 0;
-    display: block;
-    position: absolute;
-    width: calc(50vw - 5em);
-  }
-  .resp {
-    margin-top: 0.25em;
-  }
-  mono {
-    color: var(--sTcolor);
-    padding: 0 0.75ch;
-    border-radius: 0.5ch;
-    background: var(--secondary);
-  }
-  div > .itm {
-    width: 100%;
-    margin: 1em 0;
-    cursor: pointer;
-    border-radius: 1em;
-    background-color: var(--tertiary);
-    &> .ptName {
-      margin: 0;
-      font-size: 1.25vw;
-      padding: 0.75em 0;
-    }
-    &[open="true"] > .pt {
-      padding: 1em 0;
-      padding: 0.1em 1em;
-      width: calc(100% - 2em);
-      &> div  {
-        margin-bottom: 2em;
-      }
-    }
-    &[open="false"] > .pt{
-      opacity: 0;
-      height: 0px;
-    }
-    &> .pt {
-      cursor: default;
-      overflow: hidden;
-      font-size: 0.85em;
-      border-radius: 1em;
-      input, button {
-        padding: 0;
-        margin-bottom: 1em;
-        max-width: calc(100% - 0.5ch);
-      }
-      label {
-        display: flex;
-      }
-      label[for="length"]{
-        display: inline;
-      }
-      input[type="range"] {
-        height: 15px;
-        outline: none;
-        appearance: none;
-        background: grey;
-        border-radius: 5px;
-        accent-color: var(--primary);
-        transition: opacity .2s;
-        width: calc(100% - 10em);
-        &::-moz-range-thumb, &::-webkit-slider-thumb {
-          border: none;
-          outline: none;
-          background: var(--primary);
-        }
-      }
-      input[type="text"] {
-        padding: 0 1ch;
-        max-width: calc(100% - 1.5ch);
-      }
-      pre code {
-        color: var(--pTcolor);
-        padding: 0.5em;
-        display: block;
-        text-wrap: wrap;
-        font-size: 1.1em;
+.topbar {
+  cursor: default;
+  user-select: none;
+  background-color: var(--topbar-bg);
+  color: white;
+  padding: 0.1em;
+  border-radius: 0 0 0.75em 0.75em;
+  input {
+    &[type="submit"], &[type="button"] {
+      border: none;
+      margin-bottom: 0.1em;
+      border-radius: 1ch;
+      padding: 0.1ch 1ch 0.1ch 1ch;
+      background-color: var(--primary);
+      margin-top: 0.2ch;
+      &:hover {
         font-weight: bold;
-        margin-top: -0.75em;
-        height: fit-content;
-        border-radius: 0.35em;
-        width: calc(100% - 1em);
-        background-color: var(--primary);
+        max-height: 2.7ch;
+        padding: 0.5ch 1ch;
+        margin: 0;
       }
     }
-  }
-  * { width: 100%; }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@media only screen and (max-width: 787px) {
-  :root {
-    margin: 0;
-    padding: 0;
-    font-size: 2vw;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-  }
-  h1 {
-    margin-top: 4vh;
-    font-size: 8vw;
+    &[type="search"] {
+      user-select: text;
+      background-color: var(--tertiary);
+      color: var(--sTcolor);
+      border: none;
+      outline: none;
+      padding: 0.25ch 1ch 0ch 1ch;
+      border-radius: 1ch;
+      margin-right: 0.5em;
+      &:hover { 
+        font-weight: bold;
+        margin-bottom: 0.1ch;
+        padding: 0.5ch 1ch 0.25ch 1ch;
+      }
+    }
   }
   .searchbar {
-    font-size: 2vw;
-    .bar, .button, .placeholderBtn {
-      font-size: 4vw;
-    }
-    .button, .placeholderBtn {
-      display: unset;
-      width: calc(45% - 1.25em);
-      margin-top: 0.75em;
-    }
-    .button { margin-right: 0.5em }
-    .bar {
-      margin-left: auto;
-      margin-right: auto;
-      width: 90%;
+    display: inline;
+  }
+  .searchbarTitle {
+    cursor: pointer;
+    font-style: italic;
+    font-family: var(--title-font);
+    font-weight: bold;
+    color: var(--primary);
+    margin: 0 1em; 
+  }
+}
+
+#sidebar {
+  position: absolute;
+  left: 0;
+  width: 15vw;
+  background-color: var(--sidebar-bg);
+  color: white;
+  height: 100vh;
+  box-sizing: border-box;
+  top: 0;
+  z-index: -1;
+  border-radius: 0 0em 1em 0;
+  padding-top: calc(1.2em + 2ch);
+  &>#itm {
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--secondary);
+    padding: 0.1em;
+    border-radius: 0.5ch;
+    margin: 0 1ch 1ch 1ch;
+    text-align: right;
+    padding-right: 1ch;
+    padding-top: 0.4ch;
+    max-height: 1.8ch;
+    &:hover {
+      background-color: var(--primary);
+      color: var(--bg);
+      margin: -0.15ch 0.5ch 0.85ch 0.5ch;
+      font-size: 1.1em;
+      font-weight: bold;
     }
   }
-  #stuff {
-    padding: 0;
-    margin: 0;
-    margin-top: 5vh;
-    .left, .right {
-      left: 0;
-      width: 90%;
-      max-width: 90%;
-      overflow: hidden;
-      margin-left: auto;
-      margin-right: auto;
-      position: relative;
+}
+
+#endPtPane {
+  width: 85vw;
+  right: 0;
+  position: absolute;
+  background-color: var(--bg);
+  color: white;
+  padding: 1.75em 1em 0 1em;
+  z-index: -1;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  .ptName {
+    font-size: 2em;
+    margin: 0.4em auto 0.25em auto;
+  }
+  input[type="text"] {
+    user-select: text;
+    background-color: var(--secondary);
+    color: var(--sTcolor);
+    border: none;
+    outline: none;
+    padding: 0.25ch 1ch 0ch 1ch;
+    border-radius: 1ch;
+    margin-right: 0.5em;
+    &:hover { 
+      background-color: var(--sTcolor);
+      color: var(--pTcolor);
+      font-weight: bold;
+      margin-bottom: 0.1ch;
+      padding: 0.5ch 1ch 0.25ch 1ch;
     }
-    .left {
-      margin-bottom: -2em;
+  }
+  button {
+    border: none;
+    outline: none;
+    background-color: var(--primary);
+    color: var(--pTcolor);
+    border-radius: 1ch;
+    padding: 0.1ch 0.75ch 0.2ch 0.75ch;
+    &:hover {
+      background-color: var(--sTcolor);
+      padding: 0.3ch 0.75ch 0.35ch 0.75ch;
     }
-    .ptName {
-      font-size: 4vw !important;
+    &.large {
+      margin-top: 0.1em;
+      font-size: 5em;
+      width: 100%;
       &:hover {
-        font-size: 2.25em !important;
-        padding: 0.75em 0 !important; 
+        padding: 0.15ch 0.75ch 0.35ch 0.75ch;
+        margin-top: 0.07em;
       }
+    }
+  }
+  .pt {
+    &>.right, &>.left{
+      position: fixed;
+      width: calc(50% - (15vw / 2));
+      max-width: 50%;
+      box-sizing: border-box;
+      padding: 1em;
+      .title {
+        font-size: 2em;
+        text-align: center;
+      }
+    }
+    &>.right {
+      right: 0;
+    }
+    &>.left {
+      left: 15vw;
+    }
+  }
+  mono, div {
+    &#resp, &#res {
+      display: block;
+      background-color: var(--tertiary);
+      color: var(--primary);
+      padding: 0.35em 0.5em;
+      border-radius: 1ch;
     }
   }
 }
