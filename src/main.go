@@ -53,89 +53,6 @@ var (
 	}
 )
 
-func init() {
-	var ok bool
-	var err error
-	log.SetLevel(log.DebugLevel)
-
-	elh.WebDir = "web"
-
-	log.Info("reading config...")
-	if config, err = gomn.ParseFile("config.gomn"); err != nil {
-		log.Fatalf("failed to read config:  %v", err)
-	} else { log.Debug("read config")	}
-
-	var deLvl string
-	if deLvl, ok = config["log level"].(string); ok {
-		switch deLvl {
-		case "debug":
-			log.SetLevel(log.DebugLevel)
-		case "info": 
-			log.SetLevel(log.InfoLevel)
-		case "warn": 
-			log.SetLevel(log.WarnLevel)
-		case "error":
-			log.SetLevel(log.ErrorLevel)
-		case "fatal":
-			log.SetLevel(log.FatalLevel)
-		default:
-			log.Fatal("invalid log level")
-		}
-
-		log.Infof("log level set to:  %s", deLvl)
-	} else { log.Fatal("failed to get log level") }
-
-	//check if dashboard is enabled
-	//  (I know, this looks highly compressed... because it is)
-	if dashBoard, ok := config["dashboard"].(gomn.Map); ok {
-		if useWebUI, ok = dashBoard["enable"].(bool); !ok {
-			log.Fatal("dashboard --> enable is invalid")
-		} else if useWebUI { log.Debug("dashboard is enabled")
-		} else { log.Warn("web ui is disabled") }
-	} else { log.Fatal("failed to parse dashboard config") } 
-
-	//set the port from config
-	if port, ok = config["port"].(int); !ok {
-		log.Fatal("failed to get server port")
-	} else { log.Debug("success reading server port") }
-
-	//not used yet, but maps custom endpoints
-	ptMapTmp := make(map[string]map[string]string)
-	if endPtsRaw, ok := config["endpoints"].(gomn.Map); ok {
-		log.Debug("found custom endpoints")
-
-		for ptRaw, mpRaw := range endPtsRaw {
-			ptMap := make(map[string]string)
-
-			var mp gomn.Map
-			if mp, ok = mpRaw.(gomn.Map); !ok {
-				log.Fatal("failed to assert endpoint map type")
-			} else { log.Debug("asserted endpoint map") } 
-
-			for keyRaw, valRaw := range mp {
-				if key, ok := keyRaw.(string); ok {
-
-					if valS, ok := valRaw.(string); ok {
-						ptMap[key] = valS
-					}	else {
-						if valR, ok := valRaw.([]rune); ok {
-							ptMap[key] = string(valR)
-						} else { log.Fatalf("invalid endpoint map value", valRaw) }
-					}
-					
-				} else { log.Fatalf("invalid endpoint map key:  ", keyRaw) }
-			}
-
-			if pt, ok := ptRaw.(string); ok {
-				ptMapTmp[pt] = ptMap
-			} else { log.Fatal("failed to assert endpoint to string") }
-
-		}; endPtMap = ptMapTmp
-	} else { log.Debug("no custom endpoints defined") }
-
-	log.Info("startup done.")
-}
-
 func main() {
 	http.HandleFunc("/", pageHandler)
 	log.Infof("listening on port:  %d", port)
@@ -212,6 +129,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/* TODO: user-defined endpoints */
 /*func endPt(pt map[string]string) string {
 	var url string
 	if url, ok := pt["source"].(string); !ok {
