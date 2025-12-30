@@ -559,3 +559,60 @@ func echo(r *http.Request) string {
 
 	return string(bod)
 }
+
+func helpHan(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("want_html") != "" {
+		w.Write([]byte("todo: html help menu"))
+	} else {
+		w.Header().Set("Content-Type", "text/plain")
+		lines := []string{
+			serverName+" --> help",
+			"\tendpoints:",
+			"\t\t\"help\": this",
+			"\t\t\theaders:",
+			"\t\t\t\t\"want_html\": bool, set to any value for true",
+			"\t\t\"no\": No as a Service",
+			"\t\t\theaders:",
+			"\t\t\t\tN/A",
+			"\t\t\"echo\", \"e\": echo request body",
+			"\t\t\theaders:",
+			"\t\t\t\tN/A",
+			"\t\t\"time\": return the time",
+			"\t\t\theaders:",
+			"\t\t\t\t\"month\": include month (bool, any value is true)",
+			"\t\t\t\t\"day\": include day (bool, any value is true)",
+			"\t\t\t\t\"hour\": include the hour (bool, any value is true)",
+			"\t\t\t\t\"minute\": include the minute (bool, any value is true)",
+			"\t\t\t\t\"second\": include the second (bool, any value is true)",
+			"\t\t\t\t\"year\": include the year (bool, any value is true)",
+			"\t\t\t\t\"day of week\": include the weekday (bool, any value is true)",
+			"\t\t\t\t\"nanoseconds\": include nanoseconds (bool, any value is true)",
+			"\t\t\t\t\"miliseconds\": include miliseconds (bool, any value is true)",
+			"\t\t\t\t\"utc\": include return in UTC format (bool, any value is true)",
+			"\t\t\t\t\"unix\": include return in UNIX standard format (bool, any value is true)",
+			"\t\t\t\t\"fmt\": include custom format (string, value is passed to time function as a format)",
+			"\t\t\t\t\"rfc\": include time in RFC format (bool, any value is true)",
+			"\t\t\"discord\": send a message to a Discord webhook",
+			"\t\t\theaders:",
+			"\t\t\t\t\"webhook\": override webhook in config (string, used as webhook url)",
+			"\t\t\t\t\"message\": the message that's sent to Discord",
+			"\t\t\t\t\tdefault: uses request body if message header is empty",
+			"\t\t\"random\": random string generator",
+			"\t\t\tnotes:",
+			"\t\t\t\tgolang's crypto/rand library can be slow on some machines, so a sufficiently long string may take a while to generate", 
+			"\t\t\theaders:",
+			"\t\t\t\t\"length\": the length of the string",
+			"\t\t\t\t\tdefault: if length unspecified, uses 16",
+			"\t\t\t\t\ttype: int",
+			"\t\t\t\t\tpurpose: determines how many times the random string builder func iterates",
+			"\t\t\t\t\"characters\": custom set of characters to use",
+			"\t\t\t\t\ttype: string",
+			"\t\t\t\t\tpurpose: the output of a cryptographically random number generator is used to index a string for a char",
+			"\t\t\t\t\tdefault: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321!@#$%^&*()-_=+[]{}|\\;:'\"<>/?.,",
+	}
+		for _, li := range lines {
+			li = strings.ReplaceAll(li, "\t", "  ", )
+			w.Write([]byte(li+"\n"))
+		}
+	}
+}
