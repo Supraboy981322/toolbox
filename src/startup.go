@@ -10,7 +10,10 @@ package main
  *          		this. (that's also why it's in a separate file) */
 
 import (
+	"os"
 	"fmt"
+	"io/fs"
+	"path/filepath"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
 	elh "github.com/Supraboy981322/ELH"
@@ -43,6 +46,10 @@ func init() {
 	if ok, errStr := parseAdvancedConf(); !ok {
 		log.Fatal(errStr)
 	} else { log.Debug("parseAdvancedConf() returned ok") }
+
+	if tmpWebDir, err = dumpEmbededFStoDisk(); err != nil {
+		log.Fatalf("failed to write embeded filesystem to disk:  %v", err)
+	} else { log.Debug("dumped embeded filesystem to disk") }
 
 	log.Info("startup done.")
 }
@@ -152,4 +159,27 @@ func parseTopLevelConf() (bool, string) {
 	} else { log.Debug("success reading server port") }
 
 	return true, ""
+}
+
+func dumpEmbededFStoDisk() (string, error) {
+	var err error
+	tmp := "web"
+	err = fs.WalkDir(webUIdir, "web", func(path string, d fs.DirEntry, err error) error {
+		if err != nil { return err }
+
+		dest := filepath.Join(".", path)
+
+		if d.IsDir() { return os.MkdirAll(dest, 0755) }
+
+		dat, err := webUIdir.ReadFile(path)
+		if err != nil { return err }
+		return os.WriteFile(dest, dat, 0644)
+	})
+
+	if err != nil {
+		os.RemoveAll(tmp)
+		return "", err
+	}
+
+	return tmp, nil
 }

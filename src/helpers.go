@@ -2,8 +2,11 @@ package main
 
 import (
 	"io"
+	"io/fs"
+	"errors"
 	"strings"
 	"net/http"
+	"path/filepath"
 )
 
 //just gets the body of a response
@@ -54,4 +57,40 @@ func chkUrlPref(url string) string {
 
 	//return the url
 	return url
+}
+
+func chkFile(file string) (string, error) {
+	res, err := chkIsDir(file)
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			if filepath.Ext(res) == "" {
+				res += ".elh"
+				return chkFile(res)
+			} else if filepath.Ext(res) == ".elh" {
+				nS := strings.Split(filepath.Base(res), ".")
+				n := strings.Join(nS[:len(nS)-1], ".")
+				res = filepath.Dir(res)
+				res = filepath.Join(res, n+".html")
+				return chkFile(res)
+			} else { return file, fs.ErrNotExist }
+		} else { return file, err }
+	}
+	return res, nil
+}
+
+func chkIsDir(file string) (string, error) {
+	fi, err := webUIdir.Open(file)
+	if err != nil { return file, err }
+
+	st, err := fi.Stat()
+	if err != nil { return file, err }
+
+	if st.IsDir() { return filepath.Join(file, "index"), fs.ErrNotExist }
+
+	return file, nil
+}
+
+func fileExists(filePath string) bool {
+	_, err := webUIdir.Open(filePath)
+	return !errors.Is(err, fs.ErrNotExist)
 }

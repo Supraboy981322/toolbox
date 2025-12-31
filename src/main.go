@@ -5,24 +5,39 @@ import (
 	"os"
 	"fmt"
 	"time"
+	"bytes"
+	"io/fs"
+	"embed"
+	"errors"
+	"syscall"
 	"strings"
 	"strconv"
 	"net/http"
 	"math/big"
-	"encoding/json"
+	"os/signal"
+//	"encoding/json"
 	"path/filepath"
 	"github.com/charmbracelet/log"
 	"github.com/Supraboy981322/gomn"
 	elh "github.com/Supraboy981322/ELH"
 )
 
+//go:embed web/*
+var webUIdir embed.FS
+
 var (
 	port int
 	useWebUI bool
 	config gomn.Map
+	tmpWebDir string
 	serverName string
 	endPtMap map[string]map[string]string
 	srvErr = http.StatusInternalServerError
+	
+	suppNoExt = []string{
+		".elh",
+		".html",
+	}
 
 	chars = []string{
 		"a", "b",	"c", "d", "e", "f", "g",
@@ -55,6 +70,20 @@ var (
 )
 
 func main() {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	defer func() {
+		log.Debug("cleaning up...")
+		os.RemoveAll(tmpWebDir)
+		log.Warn("exiting...")
+	}()
+	go func() {
+		_ = <-sigs
+		log.Debug("cleaning up...")
+		os.RemoveAll(tmpWebDir)
+		log.Warn("exiting...")
+		os.Exit(0)
+	}()
 	http.HandleFunc("/", pageHandler)
 	log.Infof("listening on port:  %d", port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
@@ -143,28 +172,70 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 }*/
 
 func web(w http.ResponseWriter, r *http.Request) {
-	//crappy temporary workaround for
-	//  reading headers when using elh
-	dir := filepath.Dir(r.URL.Path[1:])
-	filePath := filepath.Join(dir, "headers.json")
-	log.Warn(filePath)
-	ext := filepath.Ext(r.URL.Path)
-	if ext == ".elh" || ext == "" {
-		jsonHeaders, err := json.Marshal(r.Header)
-		if err != nil {
-			log.Errorf("%v", err)
+	var resp string
+	//get the requested file
+	file := r.URL.Path[1:]
+	if file == "" { file = "index" }
+	file = filepath.Join("web", file)
+
+	file, err := chkFile(file)
+	if errors.Is(err, fs.ErrNotExist) {
+		http.Error(w, "404 not found", 404)
+		return
+	}
+
+	//get the extension of the requested file
+	ext := filepath.Ext(file)	
+	if ext == "" { //if there is no ext
+		//check against list of ext which can
+		//  have no ext in url
+		for i := 0; i < len(suppNoExt); i++ {
+			checkFile := fmt.Sprintf("%s%s", file, suppNoExt[i])
+			_, err := chkFile(file)
+			if err == nil { //if the file exists
+				file = checkFile //assume it's the correct one
+				ext = suppNoExt[i]
+				break
+			} else if !errors.Is(err, os.ErrNotExist) {
+				http.Error(w, "cannot check if file exists! Schrodinger's file:  "+err.Error(), http.StatusInternalServerError)
+				resp = "500; Schrodinger's file"
+			}
 		}
-		err = os.WriteFile(filePath, jsonHeaders, 0644)
-		if err != nil { log.Errorf("%v", err) }
+	}
+	fileByte, err := webUIdir.ReadFile(file)
+	if err != nil {
+		http.Error(w, "read file:  "+err.Error(), http.StatusInternalServerError)
+		resp = "500; err reading file"
+	}
+	fileStr := string(fileByte)
+	var result string
+	//if the file is elh, parse it
+	if ext == ".elh" {
+		result, err = elh.RenderWithRegistry(fileStr, registry, r)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			fmt.Fprintf(w, "There appears to be an error in the `.elh` file %s", file)
+			resp = "500; problem with elh file"
+			log.Error(err)
+		}
+		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprintln(w, result)
+	} else {
+		fileReader := bytes.NewReader(fileByte)
+		http.ServeContent(w, r, file, time.Now(), fileReader)
 	}
 
+	//colorize response log string
+	if resp == "" { resp = "\033[32m"+file+"\033[0m"
+	} else { resp = "\033[31m"+resp+"\033[0m" }
 
-	resp, err := elh.ServeWithRegistry(w, r, registry)
-	if err != nil { log.Error(err) }
-	log.Infof("[req]: %s", resp)
+	//colorize file log string
+	file = "\033[35m"+file+"\033[0m"
 
-	if ext == ".elh" || ext == "" {
-		err = os.Remove(filePath)
-		if err != nil { log.Errorf("%v", err) }
-	}
+	//build string
+	logStr := "\033[1;34m[req]:\033[0m "
+	logStr += file+" | "
+	logStr += "\033[1m[resp]:\033[0m "+resp
+	//log it
+	log.Print(logStr)
 }
