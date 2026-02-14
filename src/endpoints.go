@@ -560,6 +560,20 @@ func echo(r *http.Request) string {
 	return string(bod)
 }
 
+func rand_bytes(r *http.Request) ([]byte, error) {
+	b, err := io.ReadAll(r.Body)
+	if err != nil { return nil, err }
+
+	l, err := strconv.Atoi(string(b))
+	if err != nil { return nil, errors.New("not a number") }
+
+	res := make([]byte, l)
+	_, err = rand.Read(res)
+	if err != nil { return nil, err }	
+
+	return res, nil
+}
+
 func helpHan(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("want_html") != "" {
 		w.Write([]byte("todo: html help menu"))

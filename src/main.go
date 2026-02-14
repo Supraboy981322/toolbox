@@ -148,6 +148,14 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	case "yt-dlp", "ytdlp", "yt", "youtube": 
 		ytDlp(w, r)
 		return
+	case "bytes", "random_bytes":
+		selfHan = true
+		b, e := rand_bytes(r)
+		if e != nil {
+			http.Error(w, e.Error(), http.StatusBadRequest)
+			return
+		}
+		w.Write(b)
 	default:
 		if r.URL.Path == "/" {
 			r.URL.Path = "/index"
