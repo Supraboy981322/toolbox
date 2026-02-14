@@ -1,0 +1,47 @@
+<h3 class="ptName">Password Gen.</h3>
+<div id="ranPass" class="pt">
+  <span class="opts"
+      style="text-align:center;">
+    <input type="text"
+           id="chars"
+           placeholder="characters">
+    <button onclick="ranPass()">
+      generate</button>
+    <input type="range" id="length" min="1" max="50" value="16">
+    <label id="lengthLabel" for="length">16</label>
+    <pre><code style="overflow-x:scroll;" id="res">result</code></pre>
+  </span>
+  <script>
+    const ranPassElm = document.getElementById("ranPass");
+    const ranPassLabel = ranPassElm.querySelector("#lengthLabel");
+    const ranPassLen = ranPassElm.querySelector("#length");
+    ranPassLabel.innerHTML = ranPassLen.value;
+    ranPassLen.oninput = function() {
+      ranPassLabel.innerHTML = this.value;
+    }
+
+    function ranPass() {
+      const chars = ranPassElm.querySelector("#chars").value;
+      const resElm = ranPassElm.querySelector("#res");
+      const len = ranPassLen.value;
+      fetch('/ranpass', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'text/plain',
+          'bld': chars,
+          'len': len,
+        }
+      }).then(resp => {
+        if (!resp.ok) {
+          throw new Error(`http err. stat: ${resp.status}`);
+        }
+        return resp.text();
+      }).then(data => {
+        ranPassElm.querySelector("#res").innerText = data;
+      }).catch(err => {
+        console.error('ranPass() err:', err)
+        ranPassElm.querySelector("#res").innerText = err;
+      })
+    }
+  </script>
+</div>

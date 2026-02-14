@@ -1,0 +1,83 @@
+<h3 class="ptName">yt-dlp</h3>
+<div id="yt-dlp" class="pt">
+  <input id="url" type="text"
+      placeholder="video url">
+  <button onclick="ytDlp()">
+      download</button>
+  <p class="resp">
+    Status:
+    <mono id="resp">nothing yet</mono>
+  </p>
+  <script>
+    async function ytDlp() {
+      var statusCode;
+      ytDlpElm = document.getElementById("yt-dlp");
+      respElm = ytDlpElm.querySelector("#resp");
+
+      respElm.innerText = "creating request..."
+      
+      //request parameter
+      const endPt = "/yt-dlp";
+      const url = ytDlpElm.querySelector("#url").value;
+      if (url == "") {
+        respElm.innerText = "need url";
+        return
+      }
+
+      //request headers
+      const headers = {
+        'fmt': 'mp4',
+        'qual':'bestvideo+bestaudio/best',
+        'src': url,
+      };
+
+      //the output filename
+      const filename = `toolbox_yt-dlp_${Date.now()}.mp4`;
+
+      try {
+        respElm.innerText = "making request..."
+        //create request
+        const resp = await fetch(endPt, {
+          method: 'GET',
+          headers: headers,
+        });
+       
+        respElm.innerText = "server "+resp.statusText;
+        statusCode = resp.status
+
+        //check if there's an err
+        if (!resp.ok) {
+          const errDat = await resp.text();
+          throw new Error(errDat);
+        }
+        
+
+        respElm.innerText = "recieving data stream...";
+        //get the data blob
+        const blob = await resp.blob();
+        const blobURL = window.URL.createObjectURL(blob);
+        
+        respElm.innerText = "preparing download..."
+
+        //create link elm
+        const a = document.createElement('a');
+        a.href = blobURL;
+        a.download = filename;
+        document.body.appendChild(a);
+
+        respElm.innerText = "triggering download..."
+        //simulate clicking link
+        a.click();
+
+        //cleanup
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobURL);
+        respElm.innerText = "done.";
+      } catch (error) {
+        //log err
+        console.error('err dl file:', error);
+        respElm.innerText = error;
+      }
+    }
+  </script>
+</div>
